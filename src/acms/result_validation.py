@@ -15,8 +15,12 @@ import re
 
 
 @dataclass
-class ValidationResult:
-    """Result of validating an execution"""
+class TaskValidationResult:
+    """Validation results for task execution outcomes.
+    
+    Used by ResultValidator to verify tasks completed correctly.
+    NOT for patch validation (see PatchValidationResult in minipipe.patch_ledger).
+    """
     is_valid: bool
     confidence: float  # 0.0 to 1.0
     issues: List[str]
@@ -34,7 +38,7 @@ class ResultValidator:
         self,
         task: Dict[str, Any],
         result: Dict[str, Any]
-    ) -> ValidationResult:
+    ) -> TaskValidationResult:
         """
         Validate a single task's execution result
         
@@ -99,7 +103,7 @@ class ResultValidator:
         
         is_valid = confidence >= 0.7 and len(issues) == 0
         
-        return ValidationResult(
+        return TaskValidationResult(
             is_valid=is_valid,
             confidence=confidence,
             issues=issues,
@@ -114,7 +118,7 @@ class ResultValidator:
         self,
         plan: Dict[str, Any],
         results: List[Dict[str, Any]]
-    ) -> ValidationResult:
+    ) -> TaskValidationResult:
         """
         Validate overall execution plan results
         
@@ -170,7 +174,7 @@ class ResultValidator:
         
         is_valid = confidence >= 0.7 and len(issues) == 0
         
-        return ValidationResult(
+        return TaskValidationResult(
             is_valid=is_valid,
             confidence=confidence,
             issues=issues,
@@ -186,7 +190,7 @@ class ResultValidator:
     def validate_file_changes(
         self,
         expected_changes: List[Dict[str, Any]]
-    ) -> ValidationResult:
+    ) -> TaskValidationResult:
         """
         Validate that expected file changes occurred
         
@@ -244,7 +248,7 @@ class ResultValidator:
         
         is_valid = confidence >= 0.7 and len(issues) == 0
         
-        return ValidationResult(
+        return TaskValidationResult(
             is_valid=is_valid,
             confidence=confidence,
             issues=issues,

@@ -4,7 +4,11 @@ UET Contract-Compliant Tool Adapters
 Provides contract-based tool execution following UET_SUBMODULE_IO_CONTRACTS.
 All tool invocations MUST go through these adapters.
 
-Reference: DOC_AIDER_CONTRACT.md, UET_ABSTRACTION_GUIDELINES.md
+PHASE G UPDATE: Migrated to use Invoke Context.run() for standardized subprocess
+handling. The run_tool() function now delegates to run_tool_via_invoke() while
+maintaining full backward compatibility with UET contracts.
+
+Reference: DOC_AIDER_CONTRACT.md, UET_ABSTRACTION_GUIDELINES.md, DOC-INVOKE-TOOLS-WRAPPER-001
 """
 
 import json
@@ -23,6 +27,19 @@ from src.acms.uet_submodule_io_contracts import (
     ToolRunResultV1,
 )
 
+# Phase G: Import Invoke-based tool execution
+try:
+    from src.minipipe.invoke_tools import run_tool_via_invoke, create_invoke_context
+    _INVOKE_AVAILABLE = True
+except ImportError:
+    _INVOKE_AVAILABLE = False
+    import warnings
+    warnings.warn(
+        "Invoke tools module not available. Falling back to subprocess.run(). "
+        "This is deprecated and will be removed in Phase G+1.",
+        DeprecationWarning
+    )
+
 
 # ============================================================================
 # CORE TOOL EXECUTION
@@ -33,6 +50,9 @@ def run_tool(request: ToolRunRequestV1) -> ToolRunResultV1:
     """
     Execute an external tool according to UET contracts.
 
+    PHASE G: Now uses Invoke Context.run() for standardized subprocess handling
+    when available. Falls back to subprocess.run() for compatibility.
+
     NEVER raises exceptions - all failures encoded in ToolRunResultV1.
 
     Args:
@@ -40,6 +60,138 @@ def run_tool(request: ToolRunRequestV1) -> ToolRunResultV1:
 
     Returns:
         ToolRunResultV1 with exit_code, stdout, stderr, duration
+    """
+    # Use Invoke-based execution if available
+    if _INVOKE_AVAILABLE:
+        return _run_tool_via_invoke(request)
+    else:
+        return _run_tool_legacy(request)
+
+
+def _run_tool_via_invoke(request: ToolRunRequestV1) -> ToolRunResultV1:
+    """
+    Execute tool via Invoke Context.run() (Phase G preferred method).
+    
+    This provides standardized subprocess handling with:
+    - Consistent error capturing
+    - Timeout management
+    - Configuration-driven execution
+    - Logging integration
+    
+    Args:
+        request: Tool execution request
+    
+    Returns:
+        ToolRunResultV1
+    """
+    started_at = time.time()
+    start_timestamp = _utc_timestamp()
+    
+    # Validate request
+    if not request.cmd:
+        return ToolRunResultV1(
+            tool_id=request.tool_id,
+            exit_code=-3,
+            stdout="",
+            stderr="Empty command list",
+            duration_seconds=0.0,
+            timed_out=False,
+            started_at=start_timestamp,
+            completed_at=_utc_timestamp(),
+        )
+    
+    # Check working directory exists
+    if not Path(request.cwd).exists():
+        return ToolRunResultV1(
+            tool_id=request.tool_id,
+            exit_code=-3,
+            stdout="",
+            stderr=f"Working directory does not exist: {request.cwd}",
+            duration_seconds=0.0,
+            timed_out=False,
+            started_at=start_timestamp,
+            completed_at=_utc_timestamp(),
+        )
+    
+    # Create Invoke context
+    ctx = create_invoke_context()
+    
+    # Join command into string (Invoke expects string, not list)
+    cmd_str = " ".join(str(part) for part in request.cmd)
+    
+    # Prepare environment
+    env = os.environ.copy()
+    env.update(request.env)
+    
+    # Execute via Invoke
+    try:
+        # Change to working directory
+        original_cwd = os.getcwd()
+        os.chdir(request.cwd)
+        
+        try:
+            result = ctx.run(
+                cmd_str,
+                timeout=request.timeout_seconds,
+                warn=True,  # Don't raise on non-zero exit
+                hide=True,  # Capture output
+                pty=False,  # Windows compatibility
+                encoding='utf-8',
+                env=env,
+            )
+            
+            exit_code = result.return_code if result else -1
+            stdout = result.stdout or ""
+            stderr = result.stderr or ""
+            timed_out = False
+            
+        finally:
+            os.chdir(original_cwd)
+    
+    except Exception as e:
+        # Handle timeouts and other errors
+        duration = time.time() - started_at
+        is_timeout = "timeout" in str(e).lower() or duration >= request.timeout_seconds
+        
+        return ToolRunResultV1(
+            tool_id=request.tool_id,
+            exit_code=-1 if is_timeout else -3,
+            stdout="",
+            stderr=f"Execution error: {type(e).__name__}: {e}",
+            duration_seconds=duration,
+            timed_out=is_timeout,
+            started_at=start_timestamp,
+            completed_at=_utc_timestamp(),
+        )
+    
+    # Calculate duration
+    duration = time.time() - started_at
+    completed_timestamp = _utc_timestamp()
+    
+    return ToolRunResultV1(
+        tool_id=request.tool_id,
+        exit_code=exit_code,
+        stdout=stdout,
+        stderr=stderr,
+        duration_seconds=duration,
+        timed_out=timed_out,
+        started_at=start_timestamp,
+        completed_at=completed_timestamp,
+    )
+
+
+def _run_tool_legacy(request: ToolRunRequestV1) -> ToolRunResultV1:
+    """
+    Legacy subprocess.run() implementation (DEPRECATED in Phase G).
+    
+    This fallback is kept for compatibility when Invoke is not available.
+    Will be removed in Phase G+1.
+    
+    Args:
+        request: Tool execution request
+    
+    Returns:
+        ToolRunResultV1
     """
     started_at = time.time()
     start_timestamp = _utc_timestamp()

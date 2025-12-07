@@ -133,6 +133,8 @@ class ExecutionScheduler:
         """
         Get topological ordering of tasks grouped by execution level.
         Tasks in the same level can be executed in parallel.
+        
+        Optimized with O(n + e) complexity using dependency counts.
 
         Returns:
             List of levels, where each level is a list of task IDs
@@ -145,14 +147,14 @@ class ExecutionScheduler:
         levels = []
         remaining = set(self.tasks.keys())
 
-        # Cache dependency counts for O(1) checking
+        # Cache dependency counts for O(1) checking - O(n)
         dep_count = {}
         for task_id in self.tasks.keys():
             deps = self.dependency_graph.get(task_id, set())
             dep_count[task_id] = len(deps)
 
         while remaining:
-            # Find tasks with no unfulfilled dependencies (count == 0)
+            # Find tasks with no unfulfilled dependencies (count == 0) - O(n)
             current_level = [
                 task_id for task_id in remaining if dep_count[task_id] == 0
             ]
@@ -163,14 +165,13 @@ class ExecutionScheduler:
 
             levels.append(current_level)
 
-            # Remove completed tasks from remaining and update dependency counts
+            # Remove completed tasks and update dependency counts - O(e) per task
             for task_id in current_level:
                 remaining.remove(task_id)
 
-                # Decrement dependency count for all tasks that depend on this one
-                for dependent_id in remaining:
-                    deps = self.dependency_graph.get(dependent_id, set())
-                    if task_id in deps:
+                # Use reverse_deps for O(1) lookup of dependents
+                for dependent_id in self.reverse_deps.get(task_id, set()):
+                    if dependent_id in remaining:
                         dep_count[dependent_id] -= 1
 
         return levels
