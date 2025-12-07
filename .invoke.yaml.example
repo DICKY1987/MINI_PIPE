@@ -1,0 +1,90 @@
+# Example Invoke User Configuration
+# Copy this file to ~/.invoke.yaml or ./.invoke.yaml for local customization
+
+# Tool configuration overrides
+tools:
+  pytest:
+    timeout: 900  # Override default 600s timeout for slower machines
+    parallel: false  # Disable parallel execution if experiencing issues
+    coverage: true  # Always generate coverage reports
+  
+  black:
+    max_line_length: 100  # Override default 120 if you prefer shorter lines
+    target_version: "py310"
+  
+  flake8:
+    max_line_length: 100  # Should match black if you override it
+    ignore:
+      - "E203"  # Whitespace before ':' (conflicts with black)
+      - "W503"  # Line break before binary operator (conflicts with black)
+      - "E501"  # Line too long (if you want to ignore line length)
+  
+  isort:
+    profile: "black"  # Use black-compatible import sorting
+    line_length: 100  # Should match black if you override it
+  
+  mypy:
+    flags:
+      - "--ignore-missing-imports"
+      - "--no-strict-optional"
+      - "--strict"  # Enable strict mode for stricter type checking
+
+# Orchestrator overrides
+orchestrator:
+  dry_run: false  # Set to true to enable dry-run mode by default
+  max_retries: 5  # Override default 3 retries
+  timeout: 600  # Override default 300s timeout
+
+# Path overrides (rarely needed)
+paths:
+  repo_root: "."
+  src_dir: "src"
+  tests_dir: "tests"
+  logs_dir: "logs"  # Change to "custom_logs" if you prefer
+  state_dir: "state"
+  acms_runs_dir: ".acms_runs"
+
+# Runner overrides (advanced)
+run:
+  echo: false  # Set to true to print commands before execution (debugging)
+  warn: true  # Allow commands to fail without stopping
+  pty: false  # Do not use PTY (Windows compatibility)
+  hide: false  # Set to true to hide command output
+  
+  # Shell override (only change if you know what you're doing)
+  # shell: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+
+# Environment variable overrides
+# You can also use environment variables instead of this file:
+# 
+# INVOKE_TOOLS_PYTEST_TIMEOUT=900
+# INVOKE_ORCHESTRATOR_DRY_RUN=true
+# INVOKE_RUN_ECHO=true
+#
+# Environment variables take precedence over this file.
+
+# Common use cases:
+#
+# 1. Slower machine: Increase timeouts
+#    tools:
+#      pytest:
+#        timeout: 1200
+#
+# 2. Debugging: Enable command echo
+#    run:
+#      echo: true
+#
+# 3. Strict type checking: Enable mypy strict mode
+#    tools:
+#      mypy:
+#        flags:
+#          - "--strict"
+#
+# 4. Disable parallel tests (if flaky)
+#    tools:
+#      pytest:
+#        parallel: false
+#
+# 5. Always run in dry-run mode
+#    orchestrator:
+#      dry_run: true
