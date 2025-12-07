@@ -1,0 +1,359 @@
+{
+  "meta": {
+    "doc_id": "MASTER_SPLINTER_PHASE_PLAN_TEMPLATE_GUIDE",
+    "version": "1.0.0",
+    "source_file": "MASTER_SPLINTER_Phase_Plan_Template_GUIDE.md",
+    "description": "AI fill guide for MASTER_SPLINTER_Phase_Plan_Template.yml with decision-elimination rules",
+    "notes": [
+      "Converted from markdown to structured JSON",
+      "Authoritative rules follow DEV_RULES_CORE.md",
+      "Decision-elimination ready template guide"
+    ]
+  },
+  "index": {
+    "metadata": {
+      "DOC_ID": {
+        "path": "/meta/doc_id",
+        "description": "Unique identifier for this guide",
+        "tags": [
+          "meta",
+          "identifier"
+        ]
+      },
+      "VERSION": {
+        "path": "/meta/version",
+        "description": "Guide version number",
+        "tags": [
+          "meta",
+          "version"
+        ]
+      }
+    },
+    "sections": {
+      "S_FILL_GUIDE": {
+        "path": "/fill_guide",
+        "description": "Instructions for filling each template section",
+        "tags": [
+          "section",
+          "guide"
+        ]
+      },
+      "S_DECISION_RULES": {
+        "path": "/decision_elimination_rules",
+        "description": "Decision-elimination rules from UTE docs",
+        "tags": [
+          "section",
+          "rules"
+        ]
+      },
+      "S_QUICK_USAGE": {
+        "path": "/quick_usage_pattern",
+        "description": "Quick usage pattern for AI/tools",
+        "tags": [
+          "section",
+          "usage"
+        ]
+      },
+      "S_UTE_ALIGNMENT": {
+        "path": "/ute_alignment",
+        "description": "Alignment with UTE playbooks",
+        "tags": [
+          "section",
+          "alignment"
+        ]
+      },
+      "S_WORKSTREAM_SYNC": {
+        "path": "/workstream_sync",
+        "description": "Workstream sync to GitHub PM",
+        "tags": [
+          "section",
+          "sync"
+        ]
+      },
+      "S_NO_STOP_MODE": {
+        "path": "/no_stop_mode",
+        "description": "Instructions to finish all tasks without stopping",
+        "tags": [
+          "section",
+          "resilience"
+        ]
+      }
+    },
+    "features": {
+      "F_NO_STOP": {
+        "path": "/workstream_sync/no_stop_mode",
+        "description": "Critical no-stop mode feature",
+        "tags": [
+          "feature",
+          "resilience"
+        ]
+      },
+      "F_SUMMARY_REPORT": {
+        "path": "/workstream_sync/summary_report_template",
+        "description": "Summary report generation",
+        "tags": [
+          "feature",
+          "reporting"
+        ]
+      },
+      "F_EXTENSIONS": {
+        "path": "/workstream_sync/extensions_field_usage",
+        "description": "Extensions field configuration",
+        "tags": [
+          "feature",
+          "extensions"
+        ]
+      }
+    }
+  },
+  "fill_guide": {
+    "description": "How to fill each section of MASTER_SPLINTER_Phase_Plan_Template.yml",
+    "sections": {
+      "doc_id_and_version": "Keep existing values unless versioning the template",
+      "phase_identity": {
+        "fields": [
+          "phase_id",
+          "workstream_id",
+          "title",
+          "summary",
+          "objective",
+          "phase_type",
+          "status",
+          "estimate_hours",
+          "gh_item_id",
+          "tags"
+        ],
+        "status_enum": [
+          "not_started",
+          "in_progress",
+          "planned",
+          "blocked",
+          "done",
+          "abandoned"
+        ]
+      },
+      "dag_and_dependencies": {
+        "fields": [
+          "depends_on",
+          "may_run_parallel_with",
+          "parallel_group",
+          "is_critical_path"
+        ]
+      },
+      "scope_and_modules": {
+        "fields": [
+          "repo_root",
+          "modules",
+          "file_scope",
+          "forbidden_paths",
+          "worktree_strategy"
+        ]
+      },
+      "environment_and_tools": {
+        "fields": [
+          "target_os",
+          "shell",
+          "lang",
+          "python_constraints",
+          "required_services",
+          "config_files",
+          "ai_operators",
+          "tool_profiles"
+        ]
+      },
+      "execution_profile": {
+        "fields": [
+          "prompt_template_id",
+          "run_mode",
+          "max_runtime",
+          "concurrency_limits",
+          "retry_policy"
+        ]
+      },
+      "pre_flight_checks": {
+        "required_fields": [
+          "id",
+          "description",
+          "when",
+          "command",
+          "success_pattern",
+          "on_fail"
+        ]
+      },
+      "execution_plan_steps": {
+        "required_fields": [
+          "id",
+          "name",
+          "operation_kind",
+          "pattern_ids",
+          "description",
+          "tool_id",
+          "inputs",
+          "expected_outputs",
+          "requires_human_confirmation"
+        ]
+      },
+      "fix_loop_and_circuit_breakers": {
+        "fields": [
+          "enable",
+          "applies_to",
+          "config_ref",
+          "defaults",
+          "behavior"
+        ]
+      },
+      "expected_artifacts": {
+        "types": [
+          "patch",
+          "log",
+          "doc",
+          "db"
+        ],
+        "required_fields": [
+          "paths",
+          "must_exist"
+        ]
+      },
+      "acceptance_tests": {
+        "required_fields": [
+          "id",
+          "description",
+          "command",
+          "success_pattern",
+          "must_pass"
+        ]
+      },
+      "completion_gate": {
+        "fields": [
+          "rules_booleans",
+          "manual_override_controls"
+        ]
+      },
+      "observability_and_metrics": {
+        "fields": [
+          "event_tags",
+          "metrics_toggles"
+        ]
+      },
+      "governance_and_constraints": {
+        "fields": [
+          "anti_patterns_blocked",
+          "notes_for_operators"
+        ]
+      },
+      "extensions": {
+        "custom_fields": "Free-form; leave {} if unused"
+      }
+    }
+  },
+  "decision_elimination_rules": {
+    "description": "Apply from UTE docs",
+    "rules": [
+      "Decide once, apply many: keep structure unchanged; only fill variable fields",
+      "Ground truth: success only when declared artifacts exist, commands/tests match success patterns, and git scope is limited to allowed paths",
+      "Scope enforcement: all edits constrained to file_scope; never write to forbidden_paths",
+      "Verification: rely on pre_flight + acceptance tests + completion_gate",
+      "Self-heal policy: prefer deterministic fixes already allowed by tools",
+      "Parallelism: only use may_run_parallel_with/max_parallel_steps when scopes dont overlap",
+      "Stop on ambiguity: leave clear placeholder tokens rather than guessing"
+    ]
+  },
+  "quick_usage_pattern": {
+    "description": "For AI/Tools",
+    "steps": [
+      "Load template + this guide; fill every required field",
+      "Pre-commit sanity: git status --porcelain (expect clean)",
+      "When adding steps/checks/tests, always include: command + success_pattern + must_pass/must_exist",
+      "When integrating with GitHub Project sync, keep gh_item_id: null until sync script writes it",
+      "Validation: run python -m jsonschema or YAML parse check"
+    ]
+  },
+  "ute_alignment": {
+    "description": "Alignment with UTE playbooks",
+    "playbooks": [
+      "Decision Elimination Playbook: pre-answer structure, verification, scope",
+      "Execution Acceleration Guide: treat template as pre-decided plan",
+      "Pattern Recognition writeup: reuse invariant ordering and fields"
+    ]
+  },
+  "workstream_sync": {
+    "description": "Sync workstreams to GitHub Project Manager",
+    "quick_start_command": "python scripts/sync_workstreams_to_github.py",
+    "options": {
+      "custom_branch": "--branch feature/my-ws-sync",
+      "dry_run": "--dry-run"
+    },
+    "what_it_does": [
+      "Creates feature branch (auto-named with timestamp)",
+      "Commits each workstream (separate commit per file)",
+      "Pushes to remote",
+      "Generates summary report (uses template: templates/workstream_summary_report.md)"
+    ],
+    "no_stop_mode": {
+      "description": "Critical feature - finish all tasks without stopping",
+      "guarantees": [
+        "Continues through errors",
+        "Collects all errors and successes",
+        "Always generates final report",
+        "Never halts on individual workstream failures",
+        "Provides complete execution summary"
+      ],
+      "benefit": "Get complete picture of all workstreams, even if some fail"
+    },
+    "summary_report_template": {
+      "location": "templates/workstream_summary_report.md",
+      "variables": [
+        "TIMESTAMP",
+        "FEATURE_BRANCH",
+        "TOTAL_WORKSTREAMS",
+        "SUCCESS_COUNT",
+        "FAILED_COUNT",
+        "COMMITS_CREATED",
+        "ERROR_LOG"
+      ]
+    },
+    "extensions_field_usage": {
+      "workstream_sync": {
+        "enabled": true,
+        "auto_commit": true,
+        "feature_branch_pattern": "feature/ws-sync-${timestamp}",
+        "github_project_integration": true,
+        "no_stop_mode": true,
+        "summary_report_template": "templates/workstream_summary_report.md",
+        "sync_script": "scripts/sync_workstreams_to_github.py"
+      },
+      "execution_resilience": {
+        "continue_on_error": true,
+        "error_collection_mode": true,
+        "final_report_on_completion": true
+      }
+    }
+  },
+  "no_stop_mode": {
+    "core_principle": "NEVER STOP ON ERRORS",
+    "execution_model": [
+      "Error Collection: Record errors but continue execution",
+      "Success Tracking: Track successful operations independently",
+      "Final Reporting: Always produce complete summary at end",
+      "No Silent Failures: All errors logged and reported"
+    ],
+    "implementation_pattern": {
+      "description": "Process all items pattern",
+      "pseudo_code": "for item: try process, catch errors, continue; always generate final report"
+    },
+    "apply_to_phase_execution": {
+      "description": "Ensure each step has error handling that logs but doesn't abort",
+      "requirements": [
+        "Contributes to final summary report",
+        "Respects execution_resilience.continue_on_error: true"
+      ]
+    },
+    "validation_commands": {
+      "acc_resilience_check": {
+        "description": "Verify no-stop mode is enabled",
+        "command": "python -c \"import yaml; assert yaml.safe_load(open(phase_file))...\"",
+        "must_pass": true
+      }
+    }
+  }
+}

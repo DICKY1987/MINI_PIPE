@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "prompt_id": "MASTER_AUTOMATION_GAP_ANALYSIS",
+    "version": 1,
+    "source_file": "master promnt.txt",
+    "description": "Master prompt for deep automation chain and codebase analysis of a target directory.",
+    "notes": [
+      "Converted from master promnt.txt into structured JSON.",
+      "You can patch individual fields, sections, or templates without rewriting the whole prompt."
+    ]
+  },
+  "index": {
+    "metadata": {
+      "PROMPT_ID": {
+        "path": "/meta/prompt_id",
+        "description": "Unique identifier for this master prompt",
+        "tags": ["meta", "identifier"]
+      },
+      "VERSION": {
+        "path": "/meta/version",
+        "description": "Version number of the prompt",
+        "tags": ["meta", "version"]
+      }
+    },
+    "variables": {
+      "TARGET_DIR": {
+        "path": "/variables/TARGET_DIR",
+        "description": "Target directory path for analysis",
+        "tags": ["variable", "path"]
+      }
+    },
+    "core_config": {
+      "ROLE": {
+        "path": "/role",
+        "description": "AI agent role definition",
+        "tags": ["config", "role"]
+      },
+      "MISSION": {
+        "path": "/mission",
+        "description": "Analysis mission statement",
+        "tags": ["config", "mission"]
+      },
+      "OBJECTIVES": {
+        "path": "/objectives",
+        "description": "List of analysis objectives",
+        "tags": ["config", "objectives"]
+      },
+      "GLOBAL_RULES": {
+        "path": "/global_rules",
+        "description": "Global analysis rules and principles",
+        "tags": ["config", "rules"]
+      }
+    },
+    "sections": {
+      "S_UNDERSTAND_REPO": {
+        "path": "/sections/0",
+        "description": "Understanding the repository section",
+        "tags": ["section", "overview"]
+      },
+      "S_AUTOMATION_CHAIN": {
+        "path": "/sections/1",
+        "description": "Automation chain and gap analysis section",
+        "tags": ["section", "automation"]
+      },
+      "S_OVERLAP_DEPRECATED": {
+        "path": "/sections/2",
+        "description": "Overlap, deprecated, and dead code section",
+        "tags": ["section", "overlap", "deprecation"]
+      },
+      "S_GENERAL_ISSUES": {
+        "path": "/sections/3",
+        "description": "General code and system issues section",
+        "tags": ["section", "issues"]
+      },
+      "S_OUTPUT_STRUCTURE": {
+        "path": "/sections/4",
+        "description": "Output structure requirements section",
+        "tags": ["section", "output"]
+      },
+      "S_STYLE_REQUIREMENTS": {
+        "path": "/sections/5",
+        "description": "Style requirements section",
+        "tags": ["section", "style"]
+      }
+    },
+    "subsections": {
+      "SS_CHAIN_MAP": {
+        "path": "/sections/1/subsections/0",
+        "description": "Build automation chain map subsection",
+        "tags": ["subsection", "chain-map"]
+      },
+      "SS_CHAIN_BREAKS": {
+        "path": "/sections/1/subsections/1",
+        "description": "Mark automation chain breaks subsection",
+        "tags": ["subsection", "breaks"]
+      },
+      "SS_AUTOMATION_GAPS": {
+        "path": "/sections/1/subsections/2",
+        "description": "Automation gaps per step subsection",
+        "tags": ["subsection", "gaps"]
+      },
+      "SS_OVERLAPPING_IMPL": {
+        "path": "/sections/2/subsections/0",
+        "description": "Overlapping implementations subsection",
+        "tags": ["subsection", "overlap"]
+      },
+      "SS_DEPRECATION_DEAD": {
+        "path": "/sections/2/subsections/1",
+        "description": "Deprecation and dead code subsection",
+        "tags": ["subsection", "deprecation"]
+      }
+    },
+    "templates": {
+      "T_STEP": {
+        "path": "/record_templates/step_record",
+        "description": "Step record template for automation chain steps",
+        "tags": ["template", "step"]
+      },
+      "T_EDGE": {
+        "path": "/record_templates/edge_record",
+        "description": "Edge record template for step connections",
+        "tags": ["template", "edge"]
+      },
+      "T_CHAIN_BREAK": {
+        "path": "/record_templates/chain_break_record",
+        "description": "Chain break record template",
+        "tags": ["template", "break"]
+      },
+      "T_GAP": {
+        "path": "/record_templates/gap_record",
+        "description": "Gap record template",
+        "tags": ["template", "gap"]
+      },
+      "T_OVERLAP_GROUP": {
+        "path": "/record_templates/overlap_group_record",
+        "description": "Overlap group record template",
+        "tags": ["template", "overlap"]
+      },
+      "T_FINDING": {
+        "path": "/record_templates/finding_record",
+        "description": "Finding record template for deprecated/dead code",
+        "tags": ["template", "finding"]
+      },
+      "T_ISSUE": {
+        "path": "/record_templates/issue_record",
+        "description": "Issue record template for general issues",
+        "tags": ["template", "issue"]
+      },
+      "T_ACTION_PLAN": {
+        "path": "/record_templates/action_plan_phases",
+        "description": "Action plan phases template",
+        "tags": ["template", "plan"]
+      }
+    },
+    "style": {
+      "REQUIREMENTS": {
+        "path": "/style_requirements",
+        "description": "Style and formatting requirements",
+        "tags": ["style", "requirements"]
+      }
+    }
+  },
+  "variables": {
+    "TARGET_DIR": "C:/Users/richg/ALL_AI/Complete AI Development Pipeline – Canonical Phase Plan/glossary"
+  },
+  "role": "You are a senior software architect, automation engineer, and codebase auditor.",
+  "mission": "Perform a complete, direct, and deeply detailed analysis of the repository at TARGET_DIR.",
+  "objectives": [
+    "Reconstruct the end to end automation chain across build, test, deploy, data, operations, and CLI workflows.",
+    "Identify all automation gaps and chain breaks.",
+    "Detect overlapping implementations, deprecated code, unused or dead code, and redundant configuration.",
+    "Surface all other issues including correctness, security, performance, maintainability, testing, documentation, and DevOps.",
+    "Provide specific, actionable recommendations with clear return on investment and concrete implementation steps."
+  ],
+  "global_rules": [
+    "Do not be high level or generic.",
+    "Go as deep and concrete as possible.",
+    "Always tie claims to real code, structure, or configuration.",
+    "If you infer something, clearly mark it as an assumption."
+  ],
+  "sections": [
+    {
+      "key": "understand_repository",
+      "title": "1. Understand the repository as a whole",
+      "steps": [
+        "Examine TARGET_DIR to understand overall purpose and main responsibilities.",
+        "Identify key services or modules and how they interact.",
+        "Identify main entry points such as CLIs, APIs, background jobs, or workflows.",
+        "Identify the tech stack and major dependencies.",
+        "Produce a short high level overview that summarizes what the repo does and how it is structured before going into details."
+      ]
+    },
+    {
+      "key": "automation_chain_and_gaps",
+      "title": "2. Automation chain and gap analysis",
+      "subsections": [
+        {
+          "key": "chain_map",
+          "title": "2.1 Build an automation chain map",
+          "instructions": [
+            "Treat each automation relevant component as a step or node in the chain.",
+            "Look for CLI commands and scripts such as files under scripts, bin, cli, and script files like ps1 or sh.",
+            "Look for CI jobs and workflow steps under folders such as .github or other pipeline configuration locations.",
+            "Look for schedulers or cron jobs, file or state watchers, and ETL or data jobs.",
+            "Look for tests, validation steps, deployment steps, monitoring, and alert pipelines.",
+            "For each step, record a step object with the fields given in record_templates.step_record.",
+            "Map edges or hand offs between steps, including which step triggers which, and record any known chain breaks."
+          ]
+        },
+        {
+          "key": "chain_breaks",
+          "title": "2.2 Mark automation chain breaks",
+          "instructions": [
+            "A chain break exists when the next step requires a human to start it or approve it.",
+            "A chain break exists when outputs are not machine consumed and only described in documentation or runbooks.",
+            "A chain break exists when a CLI must be run interactively instead of via a standard orchestrator or wrapper.",
+            "A chain break exists when failures or timeouts do not propagate into central state, logging, or monitoring.",
+            "A chain break exists when there is no automated retry mechanism or error pipeline.",
+            "For each break, record a chain break object with the fields shown in record_templates.chain_break_record."
+          ]
+        },
+        {
+          "key": "automation_gaps",
+          "title": "2.3 Automation gaps per step",
+          "instructions": [
+            "Scan code, scripts, configuration, and documentation for manual processes such as prompts, tty assumptions, and instructions that say run X after Y or verify by eye.",
+            "Scan for repetitive patterns where the same sequence of actions is performed manually in multiple places.",
+            "Scan for missing validations and workflows such as missing pre commit hooks, missing CI gates, missing error pipelines, or missing monitoring.",
+            "Scan for incomplete workflows that start automated and end in manual steps, or that emit logs or state that are never read.",
+            "Scan for error prone operations like manual data transformations, manual configuration edits, and manual release steps.",
+            "For each gap or break, evaluate frequency, time cost, error risk, complexity, automation feasibility, return on investment, chain impact, and pattern compliance.",
+            "Document each gap as a gap object using the structure in record_templates.gap_record."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "overlap_deprecated_dead_code",
+      "title": "3. Overlap, deprecated code, and dead code",
+      "subsections": [
+        {
+          "key": "overlapping_implementations",
+          "title": "3.1 Overlapping implementations",
+          "instructions": [
+            "Look for duplicate or near duplicate functions and helpers.",
+            "Look for parallel modules that provide the same behavior such as legacy versus new or v1 versus v2 implementations.",
+            "Look for redundant configuration such as duplicate or conflicting settings or multiple environment specific copies.",
+            "Group related overlaps into overlap groups and for each group record implementations, code metrics, commit history, call sites, and a recommended keeper implementation.",
+            "Identify which implementations should be deprecated or removed and why."
+          ]
+        },
+        {
+          "key": "deprecation_and_dead_code",
+          "title": "3.2 Deprecation and dead code",
+          "instructions": [
+            "Find explicit deprecation markers such as annotations, comments that say deprecated or use X instead, and documentation or change logs that describe replacement paths.",
+            "Look for implicit deprecation by finding unused functions or classes, modules that are never imported, old branches or modules left after migrations, and files untouched for long periods when newer alternatives exist.",
+            "Record each finding as a finding object using the structure in record_templates.finding_record including type, usage, and risk level."
+          ]
+        }
+      ]
+    },
+    {
+      "key": "general_code_and_system_issues",
+      "title": "4. General code and system issues",
+      "instructions": [
+        "While performing all previous analysis, also flag non automation issues that materially affect the system.",
+        "Correctness and bugs including logic errors, missing edge case handling, and missing error handling.",
+        "Security issues including secrets in the repo, injection risks, insecure defaults, and missing authentication or permission checks.",
+        "Performance and scalability issues including obvious inefficiencies, unnecessary work, and unbounded loops or data structures.",
+        "Maintainability issues including confusing structure, duplication, magic numbers, and poor naming.",
+        "Testing and reliability issues including missing tests on critical paths, flaky tests, brittle tests, and CI gaps.",
+        "Documentation and developer experience issues including setup friction and missing or inaccurate docs.",
+        "For each issue, record an issue object using the structure in record_templates.issue_record."
+      ]
+    },
+    {
+      "key": "output_structure",
+      "title": "5. Output structure",
+      "instructions": [
+        "Organize the final answer into clearly separated sections.",
+        "Section 1 must be a high level overview that explains what the repo does, its main components, and its main pipelines.",
+        "Section 2 must be an automation chain map including a list of steps with step ids and properties and a list of edges between steps, annotated with any chain breaks.",
+        "Section 3 must describe automation gaps and chain breaks, sorted by priority and including type, pipeline, time savings, effort, and chain impact.",
+        "Section 4 must describe overlap, deprecated, and dead code findings with risk and recommended keeper or removal choices.",
+        "Section 5 must list other technical issues grouped by category such as correctness, security, performance, maintainability, testing, documentation, and DevOps.",
+        "Section 6 must provide a prioritized action plan and roadmap broken into quick wins for the first weeks, high impact work for roughly the first month, and long term work over a quarter."
+      ]
+    },
+    {
+      "key": "style_requirements_section",
+      "title": "6. Style requirements",
+      "instructions": [
+        "Be direct and explicit.",
+        "Refer to real code, file paths, configurations, and concrete evidence instead of abstract descriptions.",
+        "Do not invent files, modules, or workflows that do not exist; when you infer, clearly label the inference as an assumption.",
+        "Prefer depth over breadth and prioritize thorough analysis of real pipelines and files over generic coverage."
+      ]
+    }
+  ],
+  "record_templates": {
+    "step_record": [
+      "Step ID: STEP dash three digits such as STEP 001.",
+      "automation_class: one of FULLY_AUTOMATED, SEMI_MANUAL, MANUAL.",
+      "chain_role: one of ENTRY_POINT, INTERNAL_STEP, TERMINAL_STEP.",
+      "trigger: one of CI, cron, file_watcher, webhook, CLI_manual, or other.",
+      "state_integration: one of central_state, logs_only, none.",
+      "error_handling: one of retry_plus_escalation, log_only, none.",
+      "description: short summary of what this step does.",
+      "location: file path or script or configuration that defines or implements the step."
+    ],
+    "edge_record": [
+      "From Step: STEP id of the upstream step.",
+      "To Step: STEP id of the downstream step.",
+      "trigger_type: how the downstream step is triggered.",
+      "notes: any relevant details about data or state passed along and how robust the hand off is."
+    ],
+    "chain_break_record": [
+      "Chain Break ID: BREAK dash three digits such as BREAK 001.",
+      "from_step: STEP id of the last automated step.",
+      "to_step: STEP id of the intended next step if known.",
+      "break_type: one of Manual_Start, Manual_Approval, Missing_Handoff, No_Error_Propagation, Patternless_CLI_Use.",
+      "description: short explanation of the break and its root cause.",
+      "evidence: paths, commands, or documentation references that prove the break."
+    ],
+    "gap_record": [
+      "Gap ID: GAP dash three digits such as GAP 001.",
+      "chain_break_ids: list of related BREAK ids if any.",
+      "location: file paths or process name.",
+      "pipeline: one of Build, Test, Deploy, Data, Ops, Other.",
+      "type: one of Manual_Workflow, Chain_Break, Repetitive_Code, Missing_Validation, Incomplete_Automation, Patternless_Execution.",
+      "current_state: description of how this currently works including manual steps.",
+      "problem: why this approach is inefficient, fragile, or risky.",
+      "impact: who and what is affected including time, risk, and quality.",
+      "frequency: Daily, Weekly, Monthly, or Rare.",
+      "time_cost_hours_per_run: numeric estimate.",
+      "error_risk: High, Medium, or Low.",
+      "complexity_level: count and description of manual steps.",
+      "automation_feasibility: Trivial, Moderate, or Complex.",
+      "roi_comment: explanation of return on investment.",
+      "chain_impact: whether this affects a critical or secondary pipeline.",
+      "pattern_compliance: whether this uses standard orchestrator, state, and logging or is patternless."
+    ],
+    "overlap_group_record": [
+      "Overlap Group ID: OG dash three digits such as OG 001.",
+      "implementations: list of implementation records, each with location, description, status such as Active or Deprecated or Unknown, lines of code, first commit date, last modified date, and call site count.",
+      "recommended_keeper: index or id of the implementation that should remain.",
+      "keeper_reason: why this implementation is preferred such as more complete, better tested, or actively maintained.",
+      "items_to_deprecate: identifiers of implementations to deprecate or remove.",
+      "deprecation_reason: why they should be removed or replaced."
+    ],
+    "finding_record": [
+      "Finding ID: uses prefixes such as OVLP, DEPR, or DEAD followed by three digits.",
+      "type: one of Duplicate_Function, Overlapping_Module, Deprecated_API, Unused_Code, Dead_Code, Redundant_Config.",
+      "location: primary file or module path.",
+      "current_usage: summary of active call sites, import references, tests, and external dependencies.",
+      "risk_level: one of Critical, High, Medium, Low, Safe.",
+      "notes: any migration or replacement guidance."
+    ],
+    "issue_record": [
+      "Category: one of Correctness, Security, Performance, Maintainability, Testing, Docs, DevOps, Other.",
+      "Severity: High, Medium, or Low.",
+      "Location: file path and function or section if applicable.",
+      "Issue: clear description of the problem.",
+      "Impact: description of what can go wrong and in which scenarios.",
+      "Recommended_Fix: concrete changes or refactors rather than generic advice.",
+      "Evidence: references to code snippets, test failures, or logs."
+    ],
+    "action_plan_phases": [
+      "Phase 1 Quick Wins covering roughly the first one to two weeks with low effort, high return fixes and safe deletions.",
+      "Phase 2 High Impact covering roughly the first month focusing on critical chain breaks and high value consolidations.",
+      "Phase 3 Long Term covering roughly a quarter focusing on complex refactors and large workflow redesigns."
+    ]
+  },
+  "style_requirements": [
+    "Be direct, explicit, and code referential.",
+    "Do not invent non existent artifacts and clearly mark assumptions.",
+    "Prefer depth over breadth.",
+    "Anchor every important claim in specific files, functions, configurations, or logs."
+  ]
+}

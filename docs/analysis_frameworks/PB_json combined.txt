@@ -1,0 +1,799 @@
+{
+  "prompt_name": "OVERLAP_AND_AUTOMIZATION_CHAIN_ANALYSIS",
+  "version": "1.0.0",
+  "index": {
+    "metadata": {
+      "PROMPT_NAME": {
+        "path": "/prompt_name",
+        "description": "Unique identifier for this analysis prompt",
+        "tags": ["meta", "identifier"]
+      },
+      "VERSION": {
+        "path": "/version",
+        "description": "Version number of the prompt schema",
+        "tags": ["meta", "version"]
+      }
+    },
+    "inputs": {
+      "REPO_ROOT": {
+        "path": "/inputs/repo_root",
+        "description": "Target repository root path for analysis",
+        "tags": ["input", "path"]
+      },
+      "PRIMARY_LANGUAGES": {
+        "path": "/inputs/primary_languages",
+        "description": "Languages to focus on during analysis",
+        "tags": ["input", "config"]
+      }
+    },
+    "global_config": {
+      "ROLE": {
+        "path": "/global_instructions/role",
+        "description": "AI agent role definition",
+        "tags": ["config", "role"]
+      },
+      "MISSION": {
+        "path": "/global_instructions/overall_mission",
+        "description": "Overall analysis mission statement",
+        "tags": ["config", "mission"]
+      },
+      "RISK_LEVELS": {
+        "path": "/global_instructions/risk_levels",
+        "description": "Risk level classification definitions",
+        "tags": ["config", "risk"]
+      },
+      "AUTOMATION_CLASSES": {
+        "path": "/global_instructions/automation_classes",
+        "description": "Automation classification system",
+        "tags": ["config", "automation"]
+      },
+      "CHAIN_ROLES": {
+        "path": "/global_instructions/chain_roles",
+        "description": "Pipeline chain role definitions",
+        "tags": ["config", "pipeline"]
+      },
+      "BREAK_TYPES": {
+        "path": "/global_instructions/break_types",
+        "description": "Automation chain break type definitions",
+        "tags": ["config", "breaks"]
+      }
+    },
+    "sections": {
+      "S_CODE_OVERLAP": {
+        "path": "/analysis_sections/0",
+        "description": "Code overlap, deprecation, and dead code analysis section",
+        "tags": ["section", "overlap", "deprecation"]
+      },
+      "S_AUTOMATION_CHAIN": {
+        "path": "/analysis_sections/1",
+        "description": "Automation chain gap analysis section",
+        "tags": ["section", "automation", "pipeline"]
+      }
+    },
+    "phases": {
+      "P_OVERLAP_DETECTION": {
+        "path": "/analysis_sections/0/phases/0",
+        "description": "Overlap detection phase",
+        "tags": ["phase", "overlap"]
+      },
+      "P_DEPRECATION_DETECTION": {
+        "path": "/analysis_sections/0/phases/1",
+        "description": "Deprecation detection phase",
+        "tags": ["phase", "deprecation"]
+      },
+      "P_IMPACT_ANALYSIS": {
+        "path": "/analysis_sections/0/phases/2",
+        "description": "Impact analysis for overlap and deprecation",
+        "tags": ["phase", "impact"]
+      },
+      "P_DISCOVERY": {
+        "path": "/analysis_sections/1/discovery_phase",
+        "description": "Automation chain discovery phase",
+        "tags": ["phase", "discovery", "automation"]
+      },
+      "P_CHAIN_CLASSIFICATION": {
+        "path": "/analysis_sections/1/automation_chain_classification",
+        "description": "Automation chain classification phase",
+        "tags": ["phase", "classification", "automation"]
+      },
+      "P_GAP_IDENTIFICATION": {
+        "path": "/analysis_sections/1/gap_identification_criteria",
+        "description": "Gap identification criteria phase",
+        "tags": ["phase", "gaps"]
+      }
+    },
+    "templates": {
+      "T_STEP": {
+        "path": "/analysis_sections/1/automation_chain_classification/step_template",
+        "description": "Template for automation chain step records",
+        "tags": ["template", "step"]
+      },
+      "T_CHAIN_BREAK": {
+        "path": "/analysis_sections/1/automation_chain_classification/chain_break_template",
+        "description": "Template for chain break records",
+        "tags": ["template", "break"]
+      },
+      "T_GAP": {
+        "path": "/analysis_sections/1/evidence_collection/gap_record_template",
+        "description": "Template for gap records",
+        "tags": ["template", "gap"]
+      },
+      "T_RECOMMENDATION": {
+        "path": "/analysis_sections/1/recommendation_structure/recommendation_template",
+        "description": "Template for recommendations",
+        "tags": ["template", "recommendation"]
+      }
+    },
+    "output": {
+      "CONTRACT": {
+        "path": "/output_contract",
+        "description": "Output structure contract definition",
+        "tags": ["output", "contract"]
+      },
+      "EXEC_SUMMARY": {
+        "path": "/output_contract/executive_summary",
+        "description": "Executive summary output structure",
+        "tags": ["output", "summary"]
+      },
+      "ROADMAP": {
+        "path": "/output_contract/consolidation_and_automation_roadmap",
+        "description": "Consolidation and automation roadmap structure",
+        "tags": ["output", "roadmap"]
+      }
+    }
+  },
+  "inputs": {
+    "repo_root": "<REPO_ROOT_PATH>",
+    "primary_languages": [
+      "python",
+      "powershell",
+      "bash",
+      "javascript"
+    ],
+    "notes": [
+      "This JSON defines an integrated analysis prompt for an AI agent.",
+      "The agent should treat all sections as requirements and perform a single, unified analysis run over the target repository.",
+      "The agent may adapt concrete examples (like file paths or language-specific snippets) to the actual repo."
+    ]
+  },
+  "global_instructions": {
+    "role": "You are a static + dynamic analysis assistant specializing in code quality, architecture, and automation pipelines.",
+    "overall_mission": "Analyze the repository at <REPO_ROOT_PATH> to:\n1) Detect overlapping implementations, deprecated code, dead/unused code, and redundant functionality.\n2) Reconstruct the end-to-end automation chains (especially CLI-driven pipelines) and identify all chain breaks and gaps.\n3) Classify every step in the automation chain by its automation level.\n4) Deliver concrete, prioritized, technically detailed recommendations to consolidate code and move the system toward fully automated, pattern-based operation.",
+    "analysis_principles": [
+      "Be conservative: if you are not certain that something is unused or safe to delete, mark it as 'needs investigation' instead of assuming.",
+      "Back every finding with evidence: file paths, line ranges when possible, high-level code snippets or descriptions, and references to tests or CI.",
+      "Respect intentional redundancy such as vendor-specific code, platform-specific implementations, or explicit compatibility layers.",
+      "Prefer extending existing patterns (orchestrators, state stores, logging conventions, adapter layers) instead of introducing new one-off solutions.",
+      "Quantify impact wherever possible: time saved, error reduction, reduced maintenance surface, and automation coverage improvements.",
+      "Prefer incremental, low-risk changes that convert semi-manual steps into fully automated ones using small wrappers or adapters."
+    ],
+    "risk_levels": {
+      "Critical": "Actively used in production or core deployment paths; changes require extreme care and strong validation.",
+      "High": "Used in multiple modules or core workflows; refactors must be carefully tested.",
+      "Medium": "Used in limited scope with reasonable test coverage; changes are moderate risk.",
+      "Low": "Used only in tests or isolated utilities; relatively safe to adjust.",
+      "Safe": "No active call sites or imports; safe to deprecate or remove once verified."
+    },
+    "automation_classes": {
+      "FULLY_AUTOMATED": "Machine-triggered, no human input, has timeouts, structured logs, and error handling.",
+      "SEMI_MANUAL": "Machine-triggered but requires human input, approvals, or frequent manual intervention.",
+      "MANUAL": "Runs only when a human remembers or chooses to trigger it (local CLI, one-off scripts, ad-hoc use)."
+    },
+    "chain_roles": {
+      "ENTRY_POINT": "Start of a pipeline (e.g., commit hook, CI trigger, cron job).",
+      "INTERNAL_STEP": "Intermediate pipeline step.",
+      "TERMINAL_STEP": "End of pipeline (deploy, publish, notify, archive, etc.)."
+    },
+    "break_types": {
+      "Manual_Start": "Next step only runs when a human triggers it.",
+      "Manual_Approval": "Pipeline halts until a human approves or inspects something.",
+      "Missing_Handoff": "Output of one step is not machine-consumed by the next step.",
+      "No_Error_Propagation": "Failures or stalls do not propagate to central state/logs or alerting.",
+      "Patternless_CLI_Execution": "CLI is invoked ad-hoc without standard orchestrators, adapters, or state/log integration."
+    }
+  },
+  "analysis_sections": [
+    {
+      "id": "CODE_OVERLAP_AND_DEPRECATION",
+      "title": "Code Overlap, Deprecation, and Dead Code Analysis",
+      "mission": "Identify overlapping implementations, deprecated code, and redundant or dead functionality across the codebase, then recommend consolidation, deprecation, or removal.",
+      "phases": [
+        {
+          "id": "PHASE_1_OVERLAP_DETECTION",
+          "name": "Overlap Detection",
+          "subsections": [
+            {
+              "id": "FUNCTIONAL_OVERLAP",
+              "name": "Functional Overlap",
+              "goal": "Detect multiple implementations of the same behavior at function or class level.",
+              "checks": [
+                "Duplicate functions: same or near-identical logic with different names or locations.",
+                "Parallel implementations: multiple modules implementing the same feature.",
+                "Copy-paste code: similar blocks with minor variations (threshold: >80% similarity as duplicate, >60% as potential overlap).",
+                "Competing patterns: more than one way to achieve the same core behavior.",
+                "Redundant utilities: helper functions or utilities that provide overlapping behavior."
+              ],
+              "detection_signals": [
+                "Similar function signatures with different names or modules.",
+                "Identical or near-identical code blocks when comparing function bodies.",
+                "Same imports and dependencies used across different files to solve similar tasks.",
+                "Similar test patterns for different implementations of essentially the same logic.",
+                "Multiple files in different locations solving the same problem."
+              ]
+            },
+            {
+              "id": "MODULE_PACKAGE_OVERLAP",
+              "name": "Module and Package Overlap",
+              "goal": "Identify competing modules or packages representing the same conceptual subsystem.",
+              "checks": [
+                "Legacy vs new implementations existing side-by-side.",
+                "Forked implementations that diverged from a common origin.",
+                "Multiple modules created to support different vendors but sharing most logic.",
+                "Test utilities duplicating production logic.",
+                "Migration artifacts where both the old and new paths still exist."
+              ],
+              "detection_signals": [
+                "Directory names like 'old_', 'legacy_', 'v1_', 'deprecated_', 'archive'.",
+                "Import paths with version indicators or 'v1', 'v2', etc.",
+                "Similar module structures (subdirectories, file names) in different locations.",
+                "Docs or READMEs that describe a 'new' implementation meant to replace an older one."
+              ]
+            },
+            {
+              "id": "CONFIGURATION_OVERLAP",
+              "name": "Configuration Overlap",
+              "goal": "Find redundant or conflicting configuration definitions.",
+              "checks": [
+                "Duplicate settings appearing in multiple config files (YAML, JSON, Python, env).",
+                "Conflicting defaults for the same setting across environments or modules.",
+                "Dev / staging / prod configs that are mostly identical but maintained separately.",
+                "Schema duplication: same data models represented in multiple formats or layers."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PHASE_2_DEPRECATION_DETECTION",
+          "name": "Deprecation Detection",
+          "subsections": [
+            {
+              "id": "EXPLICIT_DEPRECATION",
+              "name": "Explicit Deprecation Markers",
+              "goal": "Identify code explicitly marked as deprecated.",
+              "signals": [
+                "Decorators such as '@deprecated' or '@deprecated(reason=..., version=...)' or equivalent annotations.",
+                "Comments like 'DEPRECATED', 'DO NOT USE', 'TODO: Remove this after ...'.",
+                "Runtime warnings using DeprecationWarning or similar mechanisms.",
+                "Language-specific deprecation annotations or JSDoc-style '@deprecated' comments."
+              ]
+            },
+            {
+              "id": "IMPLICIT_DEPRECATION",
+              "name": "Implicit Deprecation Signals",
+              "goal": "Detect code that is effectively deprecated but not explicitly marked.",
+              "signals": [
+                "Functions or classes with zero call sites within the repo.",
+                "Modules that are never imported by other modules.",
+                "Dead branches in version control where old code was left behind after refactors or migrations.",
+                "Comments like 'TODO: delete after migration', 'temporary shim', or 'legacy path'.",
+                "Files untouched for long periods (e.g., > 1 year) while newer alternatives exist.",
+                "Version markers indicating target removal in a specific future release."
+              ]
+            },
+            {
+              "id": "DOCUMENTATION_DEPRECATION",
+              "name": "Documentation Deprecation",
+              "goal": "Correlate documentation with deprecated or replacing approaches.",
+              "checks": [
+                "Docs stating that a module or API is deprecated or replaced by another.",
+                "Changelogs marking features or paths as deprecated.",
+                "Migration guides that direct users away from old APIs/modules toward newer ones.",
+                "Architecture Decision Records (ADRs) that formally deprecate approaches."
+              ]
+            },
+            {
+              "id": "DEPENDENCY_DEPRECATION",
+              "name": "Dependency Deprecation",
+              "goal": "Identify deprecated or risky third-party dependencies.",
+              "checks": [
+                "Packages that emit deprecation warnings.",
+                "Libraries with known security vulnerabilities or CVEs.",
+                "Dependencies with no updates for long periods (e.g., > 2 years) and clear successors.",
+                "Dependencies that have been superseded by better-maintained alternatives."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "PHASE_3_IMPACT_ANALYSIS",
+          "name": "Impact Analysis for Overlap and Deprecation",
+          "subsections": [
+            {
+              "id": "USAGE_ANALYSIS",
+              "name": "Usage Analysis",
+              "template_fields": {
+                "finding_id": "OVLP-XXX or DEPR-XXX or DEAD-XXX",
+                "type": [
+                  "Duplicate_Function",
+                  "Overlapping_Module",
+                  "Deprecated_API",
+                  "Unused_Code",
+                  "Redundant_Configuration",
+                  "Other"
+                ],
+                "current_usage": [
+                  "Active call site count and locations.",
+                  "Import reference count and locations.",
+                  "Associated tests and test coverage notes.",
+                  "External code or systems that depend on this functionality."
+                ],
+                "risk_level": [
+                  "Critical",
+                  "High",
+                  "Medium",
+                  "Low",
+                  "Safe"
+                ]
+              }
+            },
+            {
+              "id": "OVERLAP_RELATIONSHIP_MAPPING",
+              "name": "Overlap Relationship Mapping",
+              "template_fields": {
+                "overlap_group_id": "OG-XXX",
+                "implementations": [
+                  "List of implementations, each with: location, description, status (Active/Deprecated/Unknown), LOC, first commit date, last modified date, call site count."
+                ],
+                "recommended_keeper": "Which implementation should be kept as canonical and why (best tested, most complete, most actively maintained, etc.).",
+                "items_to_deprecate_or_remove": "Implementations to deprecate or remove and rationale."
+              }
+            }
+          ]
+        }
+      ],
+      "detection_methodology": {
+        "automated_scans": [
+          {
+            "id": "SCAN_1_CODE_SIMILARITY",
+            "name": "Code Similarity Detection",
+            "description": "Compare function bodies and key blocks to detect duplicate or near-duplicate code.",
+            "rules_of_thumb": [
+              "Flag > 80% similarity as strong duplicate candidates.",
+              "Flag > 60% similarity as potential overlap for human review."
+            ]
+          },
+          {
+            "id": "SCAN_2_IMPORT_GRAPH",
+            "name": "Import Graph Analysis",
+            "description": "Build a module dependency graph to surface unused modules, parallel imports, and circular dependencies.",
+            "goals": [
+              "Identify modules with zero incoming imports (unused or isolated).",
+              "Detect circular dependencies that may indicate architecture issues.",
+              "Find parallel import paths that suggest competing implementations."
+            ]
+          },
+          {
+            "id": "SCAN_3_PATTERN_MATCHING",
+            "name": "Pattern Matching for Deprecation and Legacy",
+            "description": "Search for explicit markers of legacy and deprecation.",
+            "targets": [
+              "Strings like 'deprecated', 'DEPRECATED', '@deprecated', 'legacy', 'old_'.",
+              "Comments containing 'TODO' combined with 'remove', 'delete', or 'migration'.",
+              "Legacy import paths where newer modules are expected."
+            ]
+          },
+          {
+            "id": "SCAN_4_GIT_HISTORY",
+            "name": "Git History Analysis",
+            "description": "Use version control history to infer staleness and migration trails.",
+            "goals": [
+              "Find files not modified in long periods while similar areas are active.",
+              "Locate commits where files or modules were marked as deprecated or moved.",
+              "Track renames or splits that may have created duplicate implementations."
+            ]
+          },
+          {
+            "id": "SCAN_5_DEAD_CODE",
+            "name": "Dead Code Detection",
+            "description": "Use static analysis plus simple grep/AST heuristics to find unused code.",
+            "targets": [
+              "Functions never called.",
+              "Classes never instantiated.",
+              "Modules never imported.",
+              "Large commented-out blocks that are effectively dead (e.g., > 50 lines)."
+            ]
+          }
+        ]
+      },
+      "analysis_instructions": {
+        "be_conservative": [
+          "Do not mark code as safe to delete unless multiple signals indicate it is unused.",
+          "Treat ambiguous cases as 'needs investigation' with notes instead of hard deletion recommendations."
+        ],
+        "provide_evidence": [
+          "For each finding, include file paths and, when possible, representative line ranges.",
+          "Show or describe code snippets that demonstrate overlap or deprecated patterns.",
+          "List all call sites and imports when asserting that something is used or unused.",
+          "Reference relevant git history if it clarifies why code exists."
+        ],
+        "context_checks": [
+          "Check whether duplicate-looking code actually encodes important behavioral differences.",
+          "Verify that newer implementations truly have feature parity before recommending hard migrations.",
+          "Look for migration guides, ADRs, and docs that might explain intentional redundancy.",
+          "Respect vendored or platform-specific code that must remain separate."
+        ],
+        "impact_quantification": [
+          "Estimate LOC that can be removed, simplified, or consolidated.",
+          "Estimate number of files and modules affected.",
+          "Note test coverage implications and any required new tests.",
+          "Estimate effort in hours and highlight risk level for each consolidation."
+        ]
+      }
+    },
+    {
+      "id": "AUTOMATION_CHAIN_GAP_ANALYSIS",
+      "title": "Automation Chain Gap Analysis for CLI Pipelines",
+      "mission": "Reconstruct the end-to-end automation chains (especially CLI-driven workflows) and identify all points where the chain breaks, degrades, or falls back to manual processes.",
+      "automation_chain_model": {
+        "nodes": {
+          "description": "Each node is a discrete step in the pipeline.",
+          "examples": [
+            "CLI command or script.",
+            "Orchestrator / scheduler / workflow job.",
+            "File, directory, or state watcher.",
+            "Test or validation step.",
+            "Deployment or release step.",
+            "Documentation or diagram generation step when automated."
+          ]
+        },
+        "edges": {
+          "description": "Edges represent handoffs or triggers between nodes.",
+          "trigger_types": [
+            "Automated triggers: cron, CI job, pipeline step, file watcher, event, state change, exit code, message/queue.",
+            "Manual triggers: a developer runs something by hand, copy-paste instructions, button clicks, manual approvals."
+          ]
+        },
+        "automation_classification": {
+          "automation_class": [
+            "FULLY_AUTOMATED – machine-triggered, no human input, has timeouts, logs, and error handling.",
+            "SEMI_MANUAL – partially automated but still requires input, approval, or ad-hoc runs.",
+            "MANUAL – runs only via human-initiated CLI or manual steps."
+          ],
+          "chain_role": [
+            "ENTRY_POINT – pipeline start.",
+            "INTERNAL_STEP – mid-pipeline.",
+            "TERMINAL_STEP – pipeline end."
+          ]
+        },
+        "chain_break_definition": {
+          "description": "A chain break exists when the pipeline cannot proceed automatically from one step to the next.",
+          "conditions": [
+            "The next step requires a human to start, approve, or manually move outputs from step A to step B.",
+            "The output of one step is not machine-consumed by the next step (only described in docs or README).",
+            "A CLI tool is invoked directly and interactively instead of via a standard orchestrator/wrapper.",
+            "Failures, timeouts, or stalls in a step do not propagate to central state/logs or monitoring.",
+            "There is no automated retry or error pipeline; operators must manually inspect and rerun."
+          ]
+        }
+      },
+      "discovery_phase": {
+        "id": "PHASE_DISCOVERY",
+        "name": "Discovery Phase",
+        "checks": {
+          "cli_and_orchestration": [
+            "Identify all CLI entry points: scripts/, bin/, cli.py, PowerShell/Bash entry scripts, or equivalent.",
+            "Detect orchestrators or wrappers such as executor scripts, orchestrator.ps1, workflow runners.",
+            "Locate state and log integration: state directories, ledgers, JSONL logs, SQLite/JSON state stores.",
+            "Find evidence of interactive usage: input()/raw_input, click.confirm, Read-Host, Pause, 'Press any key to continue...'."
+          ],
+          "manual_processes": [
+            "Scripts that assume an interactive TTY or pause for user input.",
+            "Docs or comments that say 'run script X after script Y', 'verify by eye', or 'copy results from A to B'.",
+            "Manual deployment, manual cleanup, or manual validation described in READMEs or runbooks."
+          ],
+          "repetitive_patterns": [
+            "Copy-pasted automation logic across multiple scripts.",
+            "Repeated sequences such as 'run tests, then lints, then build' that are not encapsulated in a single orchestrated command.",
+            "Manual sequences that could be replaced by a single higher-level CLI or orchestrator step."
+          ],
+          "missing_validations_and_workflows": [
+            "Missing or incomplete pre-commit hooks.",
+            "Incomplete or missing CI checks (tests, lints, code quality, security scans).",
+            "Missing error pipelines or monitoring/alert hooks for failed steps."
+          ],
+          "incomplete_workflows": [
+            "Pipelines where early steps are automated (CI, cron, watcher) but later steps (deploy, publish, notify) are manual.",
+            "Logs that are generated but never parsed or aggregated.",
+            "State written to files or DBs that no downstream process reads or reacts to."
+          ],
+          "error_prone_operations": [
+            "Manual configuration edits.",
+            "Manual data transformations or migrations.",
+            "Manual releases or hotfix processes.",
+            "CLI scripts without retries, timeouts, or structured error handling."
+          ]
+        }
+      },
+      "automation_chain_classification": {
+        "id": "PHASE_CHAIN_CLASSIFICATION",
+        "name": "Automation Chain Classification",
+        "instructions": [
+          "For each major pipeline (build, test, deploy, data, docs, etc.), lay out the steps in order, with concrete Step IDs (STEP-XXX).",
+          "Assign automation_class, trigger, state_integration, and error_handling to each step.",
+          "Identify and label chain breaks where automation_class drops (e.g., FULLY_AUTOMATED → SEMI_MANUAL or MANUAL) and there is no automated handoff."
+        ],
+        "step_template": {
+          "step_id": "STEP-XXX",
+          "description": "Short description of what the step does.",
+          "automation_class": "FULLY_AUTOMATED | SEMI_MANUAL | MANUAL",
+          "trigger": "CI | cron | file_watcher | CLI_manual | other",
+          "chain_role": "ENTRY_POINT | INTERNAL_STEP | TERMINAL_STEP",
+          "state_integration": "central_state | logs_only | none",
+          "error_handling": "retry_and_escalation | log_only | none"
+        },
+        "chain_break_template": {
+          "break_id": "BREAK-XXX",
+          "from_step": "STEP-AAA",
+          "to_step": "STEP-BBB",
+          "break_type": "Manual_Start | Manual_Approval | Missing_Handoff | No_Error_Propagation | Patternless_CLI_Execution",
+          "description": "Short explanation of why this is a chain break."
+        }
+      },
+      "gap_identification_criteria": {
+        "id": "PHASE_GAP_IDENTIFICATION",
+        "name": "Gap Identification Criteria",
+        "criteria": [
+          "Frequency: how often the affected workflow runs (Daily, Weekly, Monthly, Rare).",
+          "Time cost: estimated person-hours per execution when manual steps are involved.",
+          "Error risk: probability of human error (High, Medium, Low).",
+          "Complexity: count and description of manual steps.",
+          "Automation feasibility: Trivial, Moderate, or Complex to automate.",
+          "ROI: (Time saved × Frequency) − Implementation cost.",
+          "Chain impact: whether this break affects a critical pipeline vs secondary/maintenance paths.",
+          "Pattern compliance: whether this step uses standard orchestrator/adapter/state patterns or bypasses them with ad-hoc CLI."
+        ]
+      },
+      "evidence_collection": {
+        "id": "PHASE_EVIDENCE_COLLECTION",
+        "name": "Evidence Collection",
+        "gap_record_template": {
+          "gap_id": "GAP-XXX",
+          "chain_break_ids": [
+            "BREAK-YYY",
+            "BREAK-ZZZ"
+          ],
+          "location": "File path(s), script names, or process names.",
+          "pipeline_type": "Build | Test | Deploy | Data | Docs | Other",
+          "gap_type": "Manual_Workflow | Chain_Break | Repetitive_Code | Missing_Validation | Incomplete_Automation | Patternless_Execution",
+          "current_state": "What exists today and how it is invoked.",
+          "problem": "Why this is inefficient, error-prone, or breaks the automation chain.",
+          "impact": "Time cost, risk, quality issues, and which pipelines are affected.",
+          "evidence": [
+            "List of specific code snippets, file paths, log excerpts, or doc references that support this gap."
+          ],
+          "automation_classification_context": {
+            "from_step": "STEP-AAA with automation_class and trigger.",
+            "to_step": "STEP-BBB with automation_class and trigger.",
+            "break_type": "See break_types definitions."
+          }
+        }
+      },
+      "recommendation_structure": {
+        "id": "PHASE_RECOMMENDATIONS",
+        "name": "Recommendation Structure",
+        "recommendation_template": {
+          "gap_id": "GAP-XXX",
+          "priority": "Critical | High | Medium | Low",
+          "title": "Concise, action-oriented title.",
+          "solution": {
+            "summary": "High-level description of how to close the gap or repair the chain break.",
+            "tool_or_technology": "Tools, frameworks, or patterns to use (e.g., specific orchestrator, CI integration, watcher).",
+            "implementation": "Step-by-step, CLI- and orchestrator-aware approach.",
+            "integration_point": "Which script/orchestrator/workflow/state module to plug into or extend."
+          },
+          "effort_estimate": "Estimated hours or story points.",
+          "expected_benefits": [
+            "Time saved per period (e.g., hours per week or month).",
+            "Error reduction (e.g., expected incident reduction).",
+            "Quality improvement metrics if applicable.",
+            "Automation chain impact (e.g., 'Removes manual deploy step; build→deploy becomes fully automated.')"
+          ],
+          "implementation_steps": [
+            "Concrete first step.",
+            "Next step.",
+            "Further steps as needed."
+          ],
+          "dependencies": [
+            "Prerequisites or blockers such as 'central state DB must exist' or 'orchestrator pattern must be in place'."
+          ],
+          "quick_win_potential": "Yes/No + short explanation."
+        }
+      },
+      "analysis_scope": {
+        "id": "PHASE_SCOPE",
+        "name": "Automation-Chain-Oriented Scope",
+        "areas": {
+          "build_and_test": [
+            "Are tests, lints, and builds automatically triggered on commits or PRs?",
+            "Are they run by standard CI/orchestrator configs or via ad-hoc CLI commands?",
+            "Do failures update central state/logs and propagate clearly?",
+            "Do failures trigger retries or error handling, or do they just fail silently?"
+          ],
+          "deployment_and_release": [
+            "Is deployment fully automated from CI to production, or does it require manual CLI steps?",
+            "Is versioning and changelog generation derived automatically from commits/tags, or maintained manually?",
+            "Are rollbacks and hotfixes automated or manual?"
+          ],
+          "code_quality_and_security": [
+            "Are linting, formatting, static analysis, and security scanning enforced automatically (CI, pre-commit)?",
+            "Or are they run manually only when remembered?"
+          ],
+          "documentation_and_diagrams": [
+            "Are docs and diagrams generated from code/specs, or manually edited (prone to drift)?",
+            "Is updating docs/diagrams part of an automated pipeline or a manual chore?"
+          ],
+          "development_workflow": [
+            "Are branch rules, PR checks, and issue links enforced by automation (templates, bots, CI)?",
+            "Or do they rely mainly on human convention and discipline?"
+          ],
+          "monitoring_and_alerts": [
+            "Are errors and performance metrics automatically collected and alerted on?",
+            "Or do operators only see issues through ad-hoc CLI usage and log inspection?"
+          ],
+          "data_operations": [
+            "Are migrations, backups, and ETL jobs triggered by scheduled automation and tested in CI?",
+            "Or are they run manually via CLI and spreadsheets?"
+          ]
+        }
+      },
+      "cli_specific_checks": {
+        "id": "PHASE_CLI_CHECKS",
+        "name": "CLI-Specific Checks",
+        "interactivity_scan": [
+          "Flag any use of input(), raw_input, Read-Host, click.prompt, pause, or similar interactive patterns.",
+          "Note prompts such as 'Are you sure? [y/N]' or 'Press Enter to continue...'."
+        ],
+        "wrapper_orchestrator_usage": [
+          "Check whether CLI tools are run via standardized wrappers (e.g., run_cli_tool(tool_name, args, timeout, heartbeat)).",
+          "Verify that stdout/stderr is captured into structured logs.",
+          "Verify that status is reported to a central state or DB."
+        ],
+        "timeouts_and_heartbeats": [
+          "Confirm that long-running CLI tasks have defined timeouts and health checks.",
+          "Identify tasks that can stall indefinitely without detection."
+        ],
+        "pattern_vs_ad_hoc_execution": [
+          "Mark any CLI usage that bypasses standard patterns (orchestrator, state, error engine) as 'Patternless_CLI_Execution'.",
+          "Treat such patternless usage as high-priority for remediation."
+        ]
+      }
+    }
+  ],
+  "output_contract": {
+    "format": "The AI agent must return a single structured JSON object as the analysis result.",
+    "top_level_sections": [
+      "executive_summary",
+      "code_overlap_and_deprecation_report",
+      "automation_chain_report",
+      "combined_gap_inventory",
+      "consolidation_and_automation_roadmap",
+      "appendix"
+    ],
+    "executive_summary": {
+      "fields": {
+        "total_overlapping_implementations": "Integer",
+        "total_deprecated_items": "Integer",
+        "total_dead_or_unused_items": "Integer",
+        "total_automation_gaps": "Integer",
+        "total_chain_breaks": "Integer",
+        "critical_chain_breaks": "Integer",
+        "high_impact_quick_wins": "Integer",
+        "total_potential_time_savings_hours_per_month": "Number",
+        "estimated_implementation_effort_hours": "Number",
+        "key_findings": [
+          "Short bullet list of the most important issues.",
+          "Short bullet list of the most important opportunities."
+        ]
+      }
+    },
+    "code_overlap_and_deprecation_report": {
+      "description": "Detailed findings for overlapping implementations, deprecated code, and dead/unused code.",
+      "fields": {
+        "overlap_groups": "List of Overlap Groups (OG-XXX) with implementations and recommended keepers.",
+        "deprecated_items": "List of DEPR-XXX findings with explicit or implicit deprecation details.",
+        "dead_or_unused_items": "List of DEAD-XXX findings confirmed as unused.",
+        "per_finding_structure": "Use the templates from USAGE_ANALYSIS and OVERLAP_RELATIONSHIP_MAPPING."
+      }
+    },
+    "automation_chain_report": {
+      "description": "End-to-end automation chain map and classification.",
+      "fields": {
+        "pipelines": "List of pipelines (Build, Test, Deploy, Data, Docs, etc.) each with ordered steps (STEP-XXX).",
+        "steps": "Per-step records following the step_template.",
+        "edges": "Handoffs between steps, explicitly listing BREAK-IDs when breaks exist.",
+        "chain_breaks": "List of BREAK-XXX records following chain_break_template."
+      }
+    },
+    "combined_gap_inventory": {
+      "description": "Unified table of all gaps from both code overlap/deprecation analysis and automation-chain analysis.",
+      "table_columns": [
+        "gap_id",
+        "source_type (Code_Overlap | Deprecation | Dead_Code | Automation_Chain | Mixed)",
+        "priority",
+        "pipeline_or_scope",
+        "time_savings",
+        "effort",
+        "chain_impact",
+        "related_overlap_or_deprecation_ids",
+        "related_chain_break_ids"
+      ]
+    },
+    "consolidation_and_automation_roadmap": {
+      "description": "Phased roadmap combining consolidation and automation improvements.",
+      "phases": [
+        {
+          "name": "Phase 1 – Safe Removals and Quick Wins (Week 1-2)",
+          "focus": [
+            "Remove unused/dead code with zero call sites.",
+            "Delete obsolete tests and commented-out blocks.",
+            "Wrap trivial manual scripts in simple orchestrator commands.",
+            "Fix highest-value, low-effort chain breaks."
+          ]
+        },
+        {
+          "name": "Phase 2 – Overlap Consolidation and Core Automation (Week 3-4)",
+          "focus": [
+            "Consolidate duplicate implementations to canonical modules.",
+            "Migrate call sites to canonical implementations.",
+            "Introduce or extend orchestrators for core build/test/deploy pipelines."
+          ]
+        },
+        {
+          "name": "Phase 3 – Deprecation Cleanup and Deep Automation (Month 2-3)",
+          "focus": [
+            "Complete migrations away from deprecated modules and APIs.",
+            "Automate manual deploys, key data workflows, and monitoring gaps.",
+            "Integrate documentation/diagram generation into pipelines where feasible."
+          ]
+        },
+        {
+          "name": "Phase 4 – Verification and Metrics (Month 3+)",
+          "focus": [
+            "Run full test suites and targeted regression tests.",
+            "Update dependency graphs and automation maps.",
+            "Generate before/after metrics for automation coverage, LOC reduction, and incident reduction."
+          ]
+        }
+      ]
+    },
+    "appendix": {
+      "description": "Optional supporting material.",
+      "contents": [
+        "Representative code snippets showing overlapping or deprecated patterns.",
+        "Examples of manual vs pattern-based CLI usage.",
+        "Pipeline diagrams illustrating automation chains and chain breaks.",
+        "Metrics baselines and any custom heuristics used."
+      ]
+    }
+  },
+  "success_criteria": [
+    "All duplicate or overlapping implementations are identified and grouped into Overlap Groups (OG-XXX).",
+    "All deprecated code (explicit or implicit) is catalogued with usage data and recommended migration paths.",
+    "All dead or unused code is verified with zero references using multiple signals.",
+    "All major pipelines have a clear automation chain map with STEP-XXX and BREAK-XXX records.",
+    "All automation chain breaks are explicitly identified, categorized, and linked to remediation recommendations.",
+    "Each gap has a concrete, technically actionable recommendation including effort, impact, and dependencies.",
+    "A phased roadmap exists that sequences work by risk and ROI.",
+    "The final JSON report follows the output_contract structure."
+  ],
+  "execution_order": [
+    "Step 1 – Quick Scan: Identify obvious deprecated/legacy markers, suspicious directories, and clear manual steps from docs.",
+    "Step 2 – Automation Chain Map: Build the node/edge model for each major pipeline and label automation classes.",
+    "Step 3 – Deep Code Analysis: Perform overlap, deprecation, and dead-code detection using the detection_methodology.",
+    "Step 4 – Chain Break Identification: Use automation_class and edges to identify and label BREAK-XXX records.",
+    "Step 5 – Gap Synthesis: Combine findings into GAP-XXX records with evidence and impact assessments.",
+    "Step 6 – Recommendations: Generate recommendations using the defined templates and assign priorities.",
+    "Step 7 – Roadmap: Organize recommendations into the phased roadmap.",
+    "Step 8 – Final JSON Report: Emit a single JSON object conforming to output_contract."
+  ]
+}

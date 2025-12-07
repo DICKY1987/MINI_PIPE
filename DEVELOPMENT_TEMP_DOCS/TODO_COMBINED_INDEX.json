@@ -1,0 +1,1562 @@
+{
+  "metadata": {
+    "created": "2025-12-07T07:50:45Z",
+    "last_updated": "2025-12-07T08:00:20Z",
+    "title": "MINI_PIPE Combined TODO Index",
+    "description": "Consolidated index of all TODO documents and action plans for MINI_PIPE project",
+    "version": "2.0.0",
+    "total_documents": 7,
+    "total_tasks": 108,
+    "estimated_total_hours": 221.75
+  },
+  "documents": [
+    {
+      "id": "TODO_001",
+      "title": "Versioning Operating Contract",
+      "source_file": "TODO_VERSIONing.md",
+      "category": "governance",
+      "priority": "HIGH",
+      "status": "planning",
+      "estimated_hours": 2,
+      "summary": "Comprehensive versioning strategy for documentation-as-code with SemVer, git tagging, and audit trails",
+      "key_sections": [
+        {
+          "section": "First Principles",
+          "description": "Documentation treated as code - versioned, reviewed, and tagged like software"
+        },
+        {
+          "section": "Version Header Schema",
+          "description": "Machine-readable metadata for all governance documents",
+          "fields": ["doc_id", "semver", "status", "owner", "effective_date", "supersedes"]
+        },
+        {
+          "section": "SemVer Application",
+          "description": "MAJOR/MINOR/PATCH rules for policy changes",
+          "rules": {
+            "MAJOR": "Breaking changes to requirements/process",
+            "MINOR": "New capabilities, backward compatible",
+            "PATCH": "Clarifications, typos, formatting"
+          }
+        },
+        {
+          "section": "Git Tag Strategy",
+          "description": "Immutable snapshots via git tags",
+          "format": "docs-{doc_key}-{semver}"
+        },
+        {
+          "section": "Intent vs Execution Contract",
+          "description": "Mutable planning docs vs frozen execution contracts"
+        },
+        {
+          "section": "Runtime Integration",
+          "description": "Log policy versions in every pipeline run ledger"
+        }
+      ],
+      "implementation_requirements": [
+        "Add front matter to all governance docs",
+        "Create .github/workflows/docs-guard.yml for validation",
+        "Create .github/workflows/doc-tags.yml for tagging",
+        "Configure CODEOWNERS for approval workflow",
+        "Add runtime version extraction to pipeline",
+        "Set up versioned docs publishing (MkDocs/Docusaurus)"
+      ],
+      "validation_checklist": [
+        "Front matter validates correctly",
+        "SemVer increases monotonically",
+        "PR intent matches version bump",
+        "supersedes_version points to valid ancestor",
+        "Git tags created automatically on merge",
+        "Runtime logs capture policy versions"
+      ],
+      "tags": ["documentation", "governance", "semver", "git", "audit"]
+    },
+    {
+      "id": "TODO_002",
+      "title": "Error Automation - Remaining Tasks",
+      "source_file": "TODO_ERROR_AUTOMATION_REMAINING_TASKS.md",
+      "category": "automation",
+      "priority": "CRITICAL",
+      "status": "phases_1_2_complete",
+      "estimated_hours": 62.75,
+      "summary": "Complete implementation of error automation system with patch validation, PR creation, and monitoring",
+      "phases": {
+        "immediate_critical": {
+          "priority": "CRITICAL",
+          "time": "1.5 hours",
+          "status": "not_started",
+          "tasks": [
+            {
+              "id": "TODO-001",
+              "name": "Set Up Production Environment Variables",
+              "time": "15 minutes",
+              "requirements": ["GITHUB_TOKEN", "SLACK_WEBHOOK_URL"],
+              "blocking": ["TODO-002", "TODO-003"]
+            },
+            {
+              "id": "TODO-002",
+              "name": "Install Dependencies",
+              "time": "5 minutes",
+              "requirements": ["PyGithub>=2.1.1", "requests", "gh CLI"],
+              "blocking": ["TODO-003"]
+            },
+            {
+              "id": "TODO-003",
+              "name": "Test System with Sample Patch",
+              "time": "30 minutes",
+              "validation": ["Patch validated", "Queue operations work", "Metrics display"]
+            },
+            {
+              "id": "TODO-004",
+              "name": "Set Up Automated Monitoring",
+              "time": "30 minutes",
+              "options": ["Cron Job", "GitHub Actions"],
+              "deliverable": "Hourly health checks"
+            }
+          ]
+        },
+        "week_1_2_high": {
+          "priority": "HIGH",
+          "time": "4-5 hours",
+          "tasks": [
+            {
+              "id": "TODO-005",
+              "name": "Monitor Real-World Usage",
+              "time": "1-2 hours/week",
+              "metrics": ["Queue size", "Alert frequency", "Time saved"]
+            },
+            {
+              "id": "TODO-006",
+              "name": "Tune Confidence Thresholds",
+              "time": "2 hours",
+              "defaults": {
+                "AUTO_MERGE_THRESHOLD": 0.95,
+                "PR_THRESHOLD": 0.8
+              }
+            },
+            {
+              "id": "TODO-007",
+              "name": "Create Slack Channel for Alerts",
+              "time": "30 minutes"
+            },
+            {
+              "id": "TODO-018",
+              "name": "Establish Baseline Metrics",
+              "time": "1 hour"
+            }
+          ]
+        },
+        "month_1_2_medium": {
+          "priority": "MEDIUM",
+          "time": "33 hours",
+          "tasks": [
+            {
+              "id": "TODO-008",
+              "name": "Implement Real Security Scanning",
+              "time": "12 hours",
+              "tools": ["pip-audit", "bandit"]
+            },
+            {
+              "id": "TODO-009",
+              "name": "Add Comprehensive Test Suite",
+              "time": "16 hours",
+              "target_coverage": "80%+"
+            },
+            {
+              "id": "TODO-012",
+              "name": "Create Onboarding Guide",
+              "time": "2 hours"
+            },
+            {
+              "id": "TODO-013",
+              "name": "Create Runbook",
+              "time": "2 hours"
+            },
+            {
+              "id": "TODO-019",
+              "name": "Monthly ROI Report",
+              "time": "1 hour/month"
+            }
+          ]
+        },
+        "future_low": {
+          "priority": "LOW",
+          "time": "96+ hours",
+          "tasks": [
+            {
+              "id": "TODO-010",
+              "name": "Implement Retry Logic",
+              "time": "8 hours"
+            },
+            {
+              "id": "TODO-011",
+              "name": "Add Real Coverage Checks",
+              "time": "4 hours"
+            },
+            {
+              "id": "TODO-014",
+              "name": "Create Metrics Dashboard",
+              "time": "8 hours"
+            },
+            {
+              "id": "TODO-015",
+              "name": "Multi-Repository Support",
+              "time": "16 hours"
+            },
+            {
+              "id": "TODO-016",
+              "name": "ML-Based Confidence Scoring",
+              "time": "40+ hours"
+            },
+            {
+              "id": "TODO-017",
+              "name": "Integration with Error Detection",
+              "time": "20 hours"
+            }
+          ]
+        }
+      },
+      "success_metrics": {
+        "production_ready": {
+          "automation_coverage": "60-80%",
+          "time_savings": "14-59 hours/month"
+        },
+        "fully_operational": {
+          "automation_coverage": "80%+",
+          "time_savings": "59+ hours/month",
+          "team_trained": true
+        },
+        "optimized": {
+          "test_coverage": "80%+",
+          "security_scanning": true,
+          "stable_operation_months": 3
+        }
+      },
+      "tags": ["automation", "error-handling", "ci-cd", "github", "monitoring"]
+    },
+    {
+      "id": "TODO_003",
+      "title": "ACMS Project - Actual Fix Plan",
+      "source_file": "TODO_FIX_PLAN.md",
+      "category": "bug-fixes",
+      "priority": "CRITICAL",
+      "status": "not_started",
+      "estimated_hours": 2,
+      "summary": "Fix 5 critical and 3 medium priority issues preventing ACMS from running properly",
+      "issues": {
+        "critical": [
+          {
+            "id": "FIX-001",
+            "name": "Remove Legacy core.* Imports",
+            "severity": "BLOCKING",
+            "affected_files": [
+              "src/minipipe/executor.py",
+              "src/minipipe/circuit_breakers.py",
+              "src/minipipe/orchestrator.py",
+              "src/minipipe/recovery.py"
+            ],
+            "solution": "Delete legacy files or stub out broken imports",
+            "risk": "LOW"
+          },
+          {
+            "id": "FIX-002",
+            "name": "Create pyproject.toml",
+            "severity": "BLOCKING",
+            "impact": "Cannot install package, tests fail",
+            "solution": "Create proper package configuration",
+            "dependencies": ["setuptools>=61.0"],
+            "risk": "HIGH if skipped"
+          },
+          {
+            "id": "FIX-003",
+            "name": "Replace Deprecated datetime.utcnow()",
+            "severity": "URGENT",
+            "affected_files": [
+              "src/acms/guardrails.py:34",
+              "contracts/uet_submodule_io_contracts.py:38,170",
+              "tests/unit/test_gap_registry.py:89"
+            ],
+            "solution": "Replace with datetime.now(UTC)",
+            "python_version_impact": "Will break in Python 3.13+",
+            "risk": "HIGH if skipped"
+          },
+          {
+            "id": "FIX-004",
+            "name": "Add Missing Schema Field",
+            "severity": "BLOCKING TESTS",
+            "file": "schemas/acms/run_status.schema.json",
+            "missing_field": "workstreams_created",
+            "risk": "MEDIUM"
+          },
+          {
+            "id": "FIX-005",
+            "name": "Fix Schema Path in schema_utils.py",
+            "severity": "WILL FAIL SILENTLY",
+            "file": "src/acms/schema_utils.py:24",
+            "current_path": "src/acms/schemas/",
+            "correct_path": "schemas/",
+            "risk": "MEDIUM"
+          }
+        ],
+        "medium": [
+          {
+            "id": "FIX-006",
+            "name": "Remove Fragile sys.path Manipulation",
+            "severity": "TECHNICAL DEBT",
+            "affected_files": 12,
+            "solution": "Remove after pyproject.toml installation",
+            "depends_on": "FIX-002",
+            "risk": "LOW"
+          },
+          {
+            "id": "FIX-007",
+            "name": "Fix Demo CLI Import Errors",
+            "file": "src/cli/demo_acms_pipeline.py",
+            "solution": "Use absolute imports from src.acms",
+            "risk": "LOW"
+          },
+          {
+            "id": "FIX-008",
+            "name": "Add Missing __init__.py Files",
+            "directories": ["src/", "src/acms/", "src/minipipe/", "src/cli/", "contracts/"],
+            "solution": "Create empty __init__.py files",
+            "risk": "MEDIUM"
+          }
+        ]
+      },
+      "implementation_order": [
+        {
+          "phase": "Phase 1: Package Setup",
+          "tasks": ["FIX-002", "FIX-008", "pip install -e .[dev]"]
+        },
+        {
+          "phase": "Phase 2: Critical Code Fixes",
+          "tasks": ["FIX-003", "FIX-005", "FIX-004"]
+        },
+        {
+          "phase": "Phase 3: Clean Up Legacy Code",
+          "tasks": ["FIX-001", "FIX-007"]
+        },
+        {
+          "phase": "Phase 4: Test Cleanup",
+          "tasks": ["FIX-006"]
+        }
+      ],
+      "verification_checklist": [
+        "pip install -e .[dev] succeeds",
+        "All src.acms.* imports work without sys.path hacks",
+        "No DeprecationWarning for datetime",
+        "Schema validation finds and loads schemas",
+        "pytest tests/unit/ runs without import errors",
+        "No references to non-existent core.* modules"
+      ],
+      "tags": ["bug-fix", "python", "imports", "package-management", "deprecation"]
+    },
+    {
+      "id": "TODO_004",
+      "title": "MASTER_SPLINTER - Remaining Actions",
+      "source_file": "TODO_REMAINING_ACTIONS.md",
+      "category": "automation",
+      "priority": "HIGH",
+      "status": "phase_1_complete",
+      "estimated_hours": 30.25,
+      "summary": "Complete MASTER_SPLINTER automation with secrets configuration, real execution, GitHub integration, and email reporting",
+      "phases": {
+        "immediate_30min": {
+          "priority": "CRITICAL",
+          "blocking": "Phase 2 cannot begin without this",
+          "tasks": [
+            {
+              "id": "TODO-001",
+              "name": "Configure Secrets",
+              "time": "15 minutes",
+              "requirements": [
+                "GITHUB_TOKEN (GitHub PAT with repo, workflow scopes)",
+                "HEALTHCHECK_URL (Healthchecks.io)",
+                "SMTP configuration (Gmail app password)"
+              ],
+              "file": "C:\\Users\\richg\\OneDrive\\Desktop\\AISecrets.ps1"
+            },
+            {
+              "id": "TODO-002",
+              "name": "Test Secrets Locally",
+              "time": "5 minutes",
+              "validations": ["GitHub token", "Healthchecks.io ping", "SMTP connection"]
+            },
+            {
+              "id": "TODO-003",
+              "name": "Add Secrets to GitHub Repository",
+              "time": "5 minutes",
+              "method": "gh secret set or web interface",
+              "total_secrets": 7
+            },
+            {
+              "id": "TODO-004",
+              "name": "Verify Workflow Run",
+              "time": "5 minutes",
+              "check": "Scheduled workflow completes successfully"
+            }
+          ]
+        },
+        "week_1_optional": {
+          "priority": "MEDIUM",
+          "time": "45 minutes",
+          "tasks": [
+            {
+              "id": "TODO-005",
+              "name": "Configure Branch Protection",
+              "time": "10 minutes",
+              "rules": ["Require PR", "Require CI pass", "Require up-to-date branch"]
+            },
+            {
+              "id": "TODO-006",
+              "name": "Set Up Notification Channels",
+              "time": "5 minutes",
+              "options": ["Email", "Slack", "Discord", "Teams", "PagerDuty"]
+            },
+            {
+              "id": "TODO-007",
+              "name": "Review Phase 2 Plan in Detail",
+              "time": "30 minutes"
+            }
+          ]
+        },
+        "phase_2_week_1": {
+          "priority": "HIGH",
+          "time": "16 hours",
+          "tasks": [
+            {
+              "id": "TODO-008A",
+              "name": "Step 1 - Real Tool Execution",
+              "time": "12 hours",
+              "file": "MASTER_SPLINTER/multi_agent_workstream_coordinator.py",
+              "changes": [
+                "Remove asyncio.sleep() mock calls",
+                "Implement real CLI tool calls via CLIAdapter",
+                "Add git integration (commits, diffs)",
+                "Execute pytest for changed files"
+              ],
+              "acceptance": [
+                "No asyncio.sleep() in execution path",
+                "Real commands executed",
+                "Git commits with actual changes",
+                "Test results captured"
+              ]
+            },
+            {
+              "id": "TODO-008B",
+              "name": "Step 2 - GitHub API Integration",
+              "time": "4 hours",
+              "file": "MASTER_SPLINTER/sync_workstreams_to_github.py",
+              "changes": [
+                "Implement create_pull_request() with PyGithub",
+                "Generate PR body with workstream metadata",
+                "Create draft PRs automatically"
+              ],
+              "acceptance": [
+                "PR created automatically after push",
+                "PR marked as draft",
+                "PR body contains metadata"
+              ]
+            }
+          ]
+        },
+        "phase_2_week_2": {
+          "priority": "HIGH",
+          "time": "13 hours",
+          "tasks": [
+            {
+              "id": "TODO-009A",
+              "name": "Step 3 - Scheduled Execution Enhancement",
+              "time": "4 hours",
+              "file": "MASTER_SPLINTER/run_master_splinter.py",
+              "changes": [
+                "Add state persistence module",
+                "Implement should_run_phase()",
+                "Prevent duplicate executions"
+              ],
+              "state_file": ".state/last_run.json"
+            },
+            {
+              "id": "TODO-009B",
+              "name": "Step 4 - Email Report Distribution",
+              "time": "5 hours",
+              "file": "MASTER_SPLINTER/scripts/send_report_email.py",
+              "changes": [
+                "SMTP integration",
+                "HTML email formatting",
+                "Report attachment/embedding"
+              ]
+            },
+            {
+              "id": "TODO-009C",
+              "name": "Testing and Documentation",
+              "time": "4 hours",
+              "deliverables": [
+                "Full integration test",
+                "Updated documentation",
+                "Phase 2 execution report",
+                "Pull request"
+              ]
+            }
+          ]
+        }
+      },
+      "success_metrics": {
+        "after_immediate": {
+          "time_invested": "30 minutes",
+          "deliverables": ["Secrets configured", "Monitoring active"]
+        },
+        "after_phase_2": {
+          "time_invested": "29 hours",
+          "automation_increase": "+20%",
+          "time_savings": "+14 hours/month",
+          "total_savings": "59 hours/month"
+        },
+        "target_state": {
+          "automation_coverage": "95%",
+          "time_savings": "67 hours/month",
+          "roi_annual": "600%"
+        }
+      },
+      "tags": ["automation", "orchestration", "github", "ci-cd", "email", "monitoring"]
+    },
+    {
+      "id": "TODO_005",
+      "title": "MINI_PIPE Performance Optimization Plan",
+      "source_file": "floating-roaming-umbrella.md",
+      "category": "performance",
+      "priority": "HIGH",
+      "status": "planning",
+      "estimated_hours": 85,
+      "summary": "Systematic data-driven performance optimization with 3 implementation waves targeting 15-80% speedup",
+      "methodology": {
+        "framework": "DISCOVERY → PROFILING → DETAILED_ANALYSIS → RECOMMENDATIONS",
+        "approach": "Data-driven with before/after metrics",
+        "codebase_size": "10,868 LOC Python"
+      },
+      "waves": {
+        "wave_1_quick_wins": {
+          "priority": "HIGHEST",
+          "time": "1-2 days",
+          "expected_speedup": "15-50%",
+          "impact_effort": "High Impact / Low Effort",
+          "tasks": [
+            {
+              "id": "PERF-1.1",
+              "name": "Router State I/O Batching",
+              "file": "src/minipipe/router.py:43-104",
+              "problem": "File I/O on every update (100+ writes per execution)",
+              "solution": "Dirty-flag pattern with batched writes",
+              "expected_impact": "10-50x I/O reduction",
+              "effort": "2 hours",
+              "risk": "LOW"
+            },
+            {
+              "id": "PERF-1.2",
+              "name": "Set-Based State Checks",
+              "file": "src/minipipe/orchestrator.py:474,692",
+              "problem": "List membership O(n) in hot loops",
+              "solution": "Use frozensets for O(1) lookups",
+              "expected_impact": "3-5x speedup for large step counts",
+              "effort": "1 hour",
+              "risk": "MINIMAL"
+            },
+            {
+              "id": "PERF-1.3",
+              "name": "defaultdict for File Mapping",
+              "file": "src/acms/execution_planner.py:100-104",
+              "problem": "Repeated dict membership checks",
+              "solution": "Use collections.defaultdict",
+              "expected_impact": "2-3x speedup",
+              "effort": "30 minutes",
+              "risk": "MINIMAL"
+            }
+          ],
+          "total_effort": "3.5 hours"
+        },
+        "wave_2_algorithmic": {
+          "priority": "CRITICAL",
+          "time": "3-5 days",
+          "expected_speedup": "50-80% additional",
+          "impact_effort": "Critical Impact",
+          "tasks": [
+            {
+              "id": "PERF-2.1",
+              "name": "Priority Queue Clustering",
+              "file": "src/acms/execution_planner.py:135-147",
+              "problem": "Triple-nested loop O(n³) clustering bottleneck",
+              "solution": "Replace with heapq priority queue for O(n log n)",
+              "expected_impact": "10-100x speedup for large workloads (200+ gaps)",
+              "effort": "4-6 hours",
+              "risk": "LOW (requires extensive testing)"
+            },
+            {
+              "id": "PERF-2.2",
+              "name": "Optimized Topological Sort",
+              "file": "src/minipipe/scheduler.py:146-164",
+              "problem": "deps.issubset(completed) is O(m), called repeatedly",
+              "solution": "Cache dependency counts for O(1) checks",
+              "expected_impact": "5-10x speedup for dense dependency graphs",
+              "effort": "3 hours",
+              "risk": "LOW"
+            },
+            {
+              "id": "PERF-2.3",
+              "name": "Cycle Detection Backtracking",
+              "file": "src/minipipe/scheduler.py:103-110",
+              "problem": "path.copy() creates O(n²) memory overhead",
+              "solution": "Use backtracking without copying",
+              "expected_impact": "2-5x memory reduction",
+              "effort": "2 hours",
+              "risk": "LOW"
+            }
+          ],
+          "total_effort": "9-11 hours"
+        },
+        "wave_3_infrastructure": {
+          "priority": "MEDIUM",
+          "time": "2-3 days",
+          "purpose": "Continuous monitoring and prevention",
+          "tasks": [
+            {
+              "id": "PERF-3.1",
+              "name": "Profiling Infrastructure",
+              "file": "tools/profiling/profile_runner.py (new)",
+              "deliverables": ["ProfileRunner class", "Metrics extraction", "Report generation"],
+              "effort": "4 hours"
+            },
+            {
+              "id": "PERF-3.2",
+              "name": "Performance Regression Tests",
+              "file": "tests/performance/test_performance_benchmarks.py (new)",
+              "deliverables": ["pytest-benchmark tests", "Baseline thresholds", "CI integration"],
+              "effort": "4 hours"
+            },
+            {
+              "id": "PERF-3.3",
+              "name": "Generator Pattern for Memory Optimization",
+              "file": "src/minipipe/patch_ledger.py:586-621",
+              "solution": "Return iterator instead of materialized list",
+              "expected_impact": "50-90% memory reduction for large result sets",
+              "effort": "2 hours"
+            }
+          ],
+          "total_effort": "10 hours"
+        }
+      },
+      "performance_targets": {
+        "baseline": {
+          "small_workload_10_gaps": "3s",
+          "medium_workload_50_gaps": "15s",
+          "large_workload_200_gaps": "120s",
+          "clustering_time_200_gaps": "2000ms",
+          "router_io_operations": "100+",
+          "peak_memory_200_gaps": "500MB"
+        },
+        "wave_1_target": {
+          "small_workload_10_gaps": "2s",
+          "medium_workload_50_gaps": "10s",
+          "large_workload_200_gaps": "80s",
+          "clustering_time_200_gaps": "1500ms",
+          "router_io_operations": "10-20",
+          "peak_memory_200_gaps": "450MB"
+        },
+        "wave_2_target": {
+          "small_workload_10_gaps": "1.5s",
+          "medium_workload_50_gaps": "5s",
+          "large_workload_200_gaps": "30s",
+          "clustering_time_200_gaps": "200ms",
+          "router_io_operations": "10-20",
+          "peak_memory_200_gaps": "300MB"
+        }
+      },
+      "validation_requirements": {
+        "pre_optimization": [
+          "Run baseline profiling with cProfile",
+          "Generate flame graph with py-spy",
+          "Document baseline metrics"
+        ],
+        "per_task": [
+          "Run full test suite with coverage",
+          "Profile change and document speedup",
+          "Verify memory usage with memory_profiler",
+          "100% coverage for modified files",
+          "Update docstrings"
+        ],
+        "post_wave": [
+          "Run performance benchmarks",
+          "Compare against targets",
+          "Generate performance report",
+          "Update documentation"
+        ]
+      },
+      "critical_files": [
+        {
+          "file": "src/minipipe/router.py",
+          "lines": "43-104",
+          "wave": 1,
+          "optimization": "I/O batching"
+        },
+        {
+          "file": "src/minipipe/orchestrator.py",
+          "lines": "474,692",
+          "wave": 1,
+          "optimization": "Set-based checks"
+        },
+        {
+          "file": "src/acms/execution_planner.py",
+          "lines": "100-104",
+          "wave": 1,
+          "optimization": "defaultdict"
+        },
+        {
+          "file": "src/acms/execution_planner.py",
+          "lines": "135-147",
+          "wave": 2,
+          "optimization": "Priority queue clustering"
+        },
+        {
+          "file": "src/minipipe/scheduler.py",
+          "lines": "146-164",
+          "wave": 2,
+          "optimization": "Topological sort"
+        },
+        {
+          "file": "src/minipipe/scheduler.py",
+          "lines": "103-110",
+          "wave": 2,
+          "optimization": "Cycle detection"
+        },
+        {
+          "file": "src/minipipe/patch_ledger.py",
+          "lines": "586-621",
+          "wave": 3,
+          "optimization": "Generators"
+        }
+      ],
+      "timeline": {
+        "week_1": {
+          "wave": "Setup + Wave 1",
+          "deliverables": ["Baseline metrics", "15-50% speedup"]
+        },
+        "week_2": {
+          "wave": "Wave 2",
+          "deliverables": ["50-80% additional speedup", "Updated benchmarks"]
+        },
+        "week_3": {
+          "wave": "Wave 3",
+          "deliverables": ["CI/CD integration", "Performance dashboard"]
+        }
+      },
+      "profiling_tools": {
+        "required": ["py-spy", "line-profiler", "pytest-benchmark", "memory-profiler", "cProfile"],
+        "install": "pip install py-spy line-profiler pytest-benchmark memory-profiler",
+        "baseline_command": "py-spy record --output .performance/baseline_flamegraph.svg -- python -m src.acms.controller . --mode=full"
+      },
+      "risk_mitigation": {
+        "rollback_strategy": [
+          "Create feature branches per wave",
+          "Tag before merging (e.g., baseline-before-wave-1)",
+          "Easy rollback with git revert"
+        ],
+        "test_coverage_requirements": {
+          "overall": ">85%",
+          "modified_files": "100%",
+          "integration_tests": "All must pass",
+          "performance_tests": "Meet targets"
+        }
+      },
+      "success_criteria": {
+        "wave_1_complete": "15-50% speedup achieved, all tests pass",
+        "wave_2_complete": "Additional 50-80% speedup, clustering under 200ms",
+        "wave_3_complete": "CI/CD integrated, regression tests prevent future issues",
+        "documentation": "All changes documented with profiling evidence"
+      },
+      "tags": ["performance", "optimization", "profiling", "algorithms", "data-structures"]
+    },
+    {
+      "id": "TODO_006",
+      "title": "MINI_PIPE Codebase Optimization Action Plan",
+      "source_file": "OPTIMIZATION_ACTION_PLAN.md",
+      "category": "performance",
+      "priority": "HIGH",
+      "status": "planning",
+      "estimated_hours": 40,
+      "summary": "Measurement-driven optimization plan with 6 phases targeting 20-40% execution time improvement",
+      "key_finding": "11 O(n) list membership checks and 14 large files (>300 lines) identified for optimization",
+      "phases": {
+        "phase_1_measurement": {
+          "title": "Measurement & Baseline",
+          "duration": "Week 1",
+          "objective": "Establish performance baselines using profiling tools",
+          "tools": ["py-spy", "cProfile", "line_profiler"],
+          "deliverables": [
+            "Flame graph visualization",
+            "Top 10 CPU-consuming functions",
+            "Baseline metrics (execution time, memory)"
+          ],
+          "actions": [
+            {
+              "id": "OPT-1.1",
+              "name": "Install Profiling Tools",
+              "command": "pip install py-spy line_profiler cProfile-prettytable"
+            },
+            {
+              "id": "OPT-1.2",
+              "name": "Production-Safe Profiling",
+              "tool": "py-spy",
+              "commands": [
+                "py-spy record -o profile.svg --pid <PID>",
+                "py-spy record -o profile.svg -- python src/cli/demo_acms_pipeline.py"
+              ]
+            },
+            {
+              "id": "OPT-1.3",
+              "name": "Deterministic Profiling",
+              "tool": "cProfile",
+              "output": "Ranked list of functions by execution time"
+            },
+            {
+              "id": "OPT-1.4",
+              "name": "Line-Level Analysis",
+              "tool": "line_profiler",
+              "command": "kernprof -l -v hot_function_file.py"
+            }
+          ]
+        },
+        "phase_2_algorithmic": {
+          "title": "Algorithmic Optimization",
+          "duration": "Week 2-3",
+          "priority": "HIGH",
+          "tasks": [
+            {
+              "id": "OPT-2.1",
+              "name": "O(n) → O(1) List Lookup Conversion",
+              "impact": "Non-linear performance improvement for large datasets",
+              "instances_found": 11,
+              "files_affected": [
+                "src/acms/ai_adapter.py:355",
+                "src/acms/controller.py:280,292,314,380"
+              ],
+              "pattern": "Convert list membership checks to set/frozenset lookups",
+              "example": {
+                "before": "if status in [\"pending\", \"active\", \"completed\", \"failed\"]:",
+                "after": "VALID_STATUSES = {\"pending\", \"active\", \"completed\", \"failed\"}\nif status in VALID_STATUSES:"
+              }
+            },
+            {
+              "id": "OPT-2.2",
+              "name": "Efficient Collection Building",
+              "impact": "Reduces O(n²) complexity",
+              "techniques": ["List comprehension", "collections.deque"]
+            }
+          ]
+        },
+        "phase_3_structural": {
+          "title": "Structural Improvements",
+          "duration": "Week 4-5",
+          "priority": "MEDIUM",
+          "objective": "Improved testability and maintainability",
+          "tasks": [
+            {
+              "id": "OPT-3.1",
+              "name": "God Object Refactoring",
+              "large_files": [
+                {
+                  "file": "src/acms/controller.py",
+                  "lines": 769,
+                  "size": "31KB",
+                  "split_into": ["controller_core.py", "controller_phases.py", "controller_state.py"]
+                },
+                {
+                  "file": "src/minipipe/orchestrator.py",
+                  "lines": 695,
+                  "size": "22KB",
+                  "split_into": ["orchestrator_tasks.py", "orchestrator_execution.py"]
+                },
+                {
+                  "file": "src/minipipe/router.py",
+                  "lines": 675,
+                  "size": "24KB",
+                  "split_into": ["router_rules.py", "router_dispatch.py"]
+                },
+                {
+                  "file": "src/minipipe/patch_ledger.py",
+                  "lines": 642,
+                  "size": "19KB",
+                  "split_into": ["ledger_storage.py", "ledger_queries.py"]
+                },
+                {
+                  "file": "src/minipipe/executor.py",
+                  "lines": 621,
+                  "size": "23KB",
+                  "split_into": ["executor_runtime.py", "executor_monitoring.py"]
+                }
+              ],
+              "strategy": ["Identify cohesive groups", "Extract modules", "Use composition", "Facade pattern for compatibility"]
+            }
+          ]
+        },
+        "phase_4_enhancement": {
+          "title": "Performance Enhancement",
+          "duration": "Week 6",
+          "tasks": [
+            {
+              "id": "OPT-4.1",
+              "name": "Caching Implementation",
+              "priority": "HIGH",
+              "techniques": ["functools.lru_cache", "cachetools.TTLCache"],
+              "target_hit_rate": ">80%"
+            },
+            {
+              "id": "OPT-4.2",
+              "name": "Logging Optimization",
+              "priority": "MEDIUM",
+              "pattern": "Guarded logging with logger.isEnabledFor()",
+              "target": "<5% execution time overhead"
+            },
+            {
+              "id": "OPT-4.3",
+              "name": "I/O Optimization",
+              "technique": "Buffered batch writes",
+              "impact": "Reduces file I/O operations"
+            }
+          ]
+        },
+        "phase_5_database": {
+          "title": "Database & External I/O",
+          "duration": "Week 7",
+          "tasks": [
+            {
+              "id": "OPT-5.1",
+              "name": "N+1 Query Detection",
+              "priority": "HIGH",
+              "detection": "Enable SQLAlchemy query logging",
+              "fix": "Use eager loading with joinedload()",
+              "target": ">50% query reduction"
+            }
+          ]
+        },
+        "phase_6_concurrency": {
+          "title": "Concurrency Strategy",
+          "duration": "Week 8",
+          "prerequisite": "Profiling shows CPU-bound bottlenecks",
+          "workload_classification": {
+            "cpu_bound": {
+              "characteristics": "Heavy computation, minimal I/O",
+              "solution": "multiprocessing.Pool",
+              "expected_speedup": "Linear with cores"
+            },
+            "io_bound_slow": {
+              "characteristics": "Network calls, DB queries",
+              "solution": "asyncio",
+              "expected_speedup": ">5x improvement"
+            },
+            "io_bound_fast": {
+              "characteristics": "File I/O, simple APIs",
+              "solution": "threading.ThreadPoolExecutor"
+            }
+          }
+        }
+      },
+      "measurement_validation": {
+        "before_each_phase": [
+          "Run profiling suite",
+          "Document baseline metrics",
+          "Identify specific targets"
+        ],
+        "after_each_change": [
+          "Re-run profiling",
+          "Compare before/after metrics",
+          "Run full test suite",
+          "Document improvements"
+        ],
+        "key_metrics": {
+          "total_execution_time": {
+            "tool": "time command",
+            "target": "-20% minimum"
+          },
+          "function_call_count": {
+            "tool": "cProfile",
+            "target": "Reduce top offenders"
+          },
+          "memory_usage": {
+            "tool": "memory_profiler",
+            "target": "No regression"
+          },
+          "cache_hit_rate": {
+            "tool": "Custom logging",
+            "target": ">80%"
+          },
+          "test_coverage": {
+            "tool": "pytest-cov",
+            "target": ">85% maintained"
+          }
+        }
+      },
+      "risk_mitigation": {
+        "safety_measures": [
+          "All optimizations in feature branches",
+          "Full test suite passes before merge",
+          "Keep original implementation for 1 sprint",
+          "Automated benchmarks in CI/CD"
+        ],
+        "red_flags": [
+          "Performance regression in any metric",
+          "Test failures",
+          "Increased memory usage >20%",
+          "Code complexity increase"
+        ]
+      },
+      "expected_impact": {
+        "execution_time": "-20% to -40%",
+        "code_maintainability": "Improved (smaller modules)",
+        "test_coverage": "Maintained at >85%",
+        "memory_usage": "No regression"
+      },
+      "timeline": "8 weeks",
+      "tags": ["performance", "optimization", "profiling", "refactoring", "measurement"]
+    },
+    {
+      "id": "TODO_007",
+      "title": "Claude Codebase Performance Audit",
+      "source_file": "CLUADE Codebase Performance Audit.txt",
+      "category": "performance",
+      "priority": "HIGH",
+      "status": "completed_analysis",
+      "estimated_hours": 0,
+      "summary": "Comprehensive performance audit results identifying critical bottlenecks and optimization opportunities across MINI_PIPE codebase",
+      "audit_metadata": {
+        "tool": "Claude Code v2.0.59",
+        "model": "Sonnet 4.5",
+        "date": "2025-12-07",
+        "codebase_size": "10,868 LOC Python",
+        "framework": "DISCOVERY → PROFILING → DETAILED_ANALYSIS → RECOMMENDATIONS"
+      },
+      "critical_bottlenecks": {
+        "algorithmic_complexity": [
+          {
+            "id": "BOTTLENECK-001",
+            "severity": "CRITICAL",
+            "name": "Triple-nested loop in execution_planner",
+            "file": "src/acms/execution_planner.py",
+            "lines": "135-147",
+            "complexity": "O(n³)",
+            "issue": "Clustering bottleneck",
+            "expected_speedup": "10-100x for large workloads (200+ gaps)"
+          },
+          {
+            "id": "BOTTLENECK-002",
+            "severity": "CRITICAL",
+            "name": "Double-nested loop in file mapping",
+            "file": "src/acms/execution_planner.py",
+            "lines": "100-104",
+            "complexity": "O(n*m)",
+            "issue": "Inefficient file-to-gap mapping"
+          }
+        ],
+        "io_data_structures": [
+          {
+            "id": "BOTTLENECK-003",
+            "severity": "HIGH",
+            "name": "File I/O on every update",
+            "file": "src/minipipe/router.py",
+            "line": 100,
+            "issue": "100+ disk writes per execution",
+            "expected_improvement": "10-50x I/O reduction"
+          },
+          {
+            "id": "BOTTLENECK-004",
+            "severity": "HIGH",
+            "name": "List membership checks",
+            "file": "src/minipipe/orchestrator.py",
+            "lines": "474, 692",
+            "issue": "Repeated O(n) searches",
+            "expected_improvement": "3-5x speedup for large step counts"
+          },
+          {
+            "id": "BOTTLENECK-005",
+            "severity": "HIGH",
+            "name": "Path copying in cycle detection",
+            "file": "src/minipipe/scheduler.py",
+            "line": 110,
+            "issue": "O(n²) memory overhead",
+            "expected_improvement": "2-5x memory reduction"
+          }
+        ],
+        "medium_priority": [
+          {
+            "id": "BOTTLENECK-006",
+            "severity": "MEDIUM",
+            "name": "Inefficient topological sort",
+            "file": "src/minipipe/scheduler.py",
+            "line": 152,
+            "issue": "Inefficient dependency resolution",
+            "expected_improvement": "5-10x speedup for dense graphs"
+          },
+          {
+            "id": "BOTTLENECK-007",
+            "severity": "MEDIUM",
+            "name": "Generator materialization",
+            "file": "src/minipipe/patch_ledger.py",
+            "line": 621,
+            "issue": "Unnecessary memory allocation",
+            "expected_improvement": "50-90% memory reduction"
+          }
+        ]
+      },
+      "three_wave_implementation": {
+        "wave_1_quick_wins": {
+          "duration": "1-2 days",
+          "expected_speedup": "15-50%",
+          "impact_effort": "High Impact / Low Effort",
+          "total_effort": "3.5 hours",
+          "tasks": [
+            {
+              "id": "WAVE1-1",
+              "name": "Router State I/O Batching",
+              "priority": "HIGHEST",
+              "file": "src/minipipe/router.py:43-104",
+              "solution": "Dirty-flag pattern with batched writes",
+              "expected_impact": "10-50x I/O reduction",
+              "effort": "2 hours",
+              "risk": "LOW"
+            },
+            {
+              "id": "WAVE1-2",
+              "name": "Set-Based State Checks",
+              "file": "src/minipipe/orchestrator.py:474,692",
+              "solution": "Use frozensets for O(1) lookups",
+              "expected_impact": "3-5x speedup",
+              "effort": "1 hour",
+              "risk": "MINIMAL"
+            },
+            {
+              "id": "WAVE1-3",
+              "name": "defaultdict for File Mapping",
+              "file": "src/acms/execution_planner.py:100-104",
+              "solution": "Use collections.defaultdict",
+              "expected_impact": "2-3x speedup",
+              "effort": "30 minutes",
+              "risk": "MINIMAL"
+            }
+          ]
+        },
+        "wave_2_algorithmic": {
+          "duration": "3-5 days",
+          "expected_speedup": "50-80% additional",
+          "impact": "Critical",
+          "total_effort": "9-11 hours",
+          "tasks": [
+            {
+              "id": "WAVE2-1",
+              "name": "Priority Queue Clustering",
+              "priority": "CRITICAL",
+              "file": "src/acms/execution_planner.py:135-147",
+              "problem": "Triple-nested loop O(n³)",
+              "solution": "heapq priority queue for O(n log n)",
+              "expected_impact": "10-100x speedup for 200+ gaps",
+              "effort": "4-6 hours",
+              "risk": "LOW (extensive testing required)"
+            },
+            {
+              "id": "WAVE2-2",
+              "name": "Optimized Topological Sort",
+              "file": "src/minipipe/scheduler.py:146-164",
+              "problem": "Repeated O(m) subset checks",
+              "solution": "Cache dependency counts for O(1) checks",
+              "expected_impact": "5-10x speedup",
+              "effort": "3 hours",
+              "risk": "LOW"
+            },
+            {
+              "id": "WAVE2-3",
+              "name": "Cycle Detection Backtracking",
+              "file": "src/minipipe/scheduler.py:103-110",
+              "problem": "path.copy() O(n²) memory",
+              "solution": "Backtracking without copying",
+              "expected_impact": "2-5x memory reduction",
+              "effort": "2 hours",
+              "risk": "LOW"
+            }
+          ]
+        },
+        "wave_3_infrastructure": {
+          "duration": "2-3 days",
+          "purpose": "Continuous monitoring and prevention",
+          "total_effort": "10 hours",
+          "tasks": [
+            {
+              "id": "WAVE3-1",
+              "name": "Profiling Infrastructure",
+              "file": "tools/profiling/profile_runner.py (new)",
+              "deliverables": ["ProfileRunner class", "Metrics extraction", "Report generation"],
+              "effort": "4 hours"
+            },
+            {
+              "id": "WAVE3-2",
+              "name": "Performance Regression Tests",
+              "file": "tests/performance/test_performance_benchmarks.py (new)",
+              "deliverables": ["pytest-benchmark tests", "Baseline thresholds", "CI integration"],
+              "effort": "4 hours"
+            },
+            {
+              "id": "WAVE3-3",
+              "name": "Generator Pattern Optimization",
+              "file": "src/minipipe/patch_ledger.py:586-621",
+              "solution": "Return iterator instead of list",
+              "expected_impact": "50-90% memory reduction",
+              "effort": "2 hours"
+            }
+          ]
+        }
+      },
+      "performance_targets": {
+        "baseline": {
+          "small_workload_10_gaps": "3s",
+          "medium_workload_50_gaps": "15s",
+          "large_workload_200_gaps": "120s",
+          "clustering_time_200_gaps": "2000ms",
+          "router_io_operations": "100+",
+          "peak_memory_200_gaps": "500MB"
+        },
+        "wave_1_target": {
+          "small_workload_10_gaps": "2s",
+          "medium_workload_50_gaps": "10s",
+          "large_workload_200_gaps": "80s",
+          "clustering_time_200_gaps": "1500ms",
+          "router_io_operations": "10-20",
+          "peak_memory_200_gaps": "450MB"
+        },
+        "wave_2_target": {
+          "small_workload_10_gaps": "1.5s",
+          "medium_workload_50_gaps": "5s",
+          "large_workload_200_gaps": "30s",
+          "clustering_time_200_gaps": "200ms",
+          "router_io_operations": "10-20",
+          "peak_memory_200_gaps": "300MB"
+        }
+      },
+      "profiling_tools_required": {
+        "install_command": "pip install py-spy line-profiler pytest-benchmark memory-profiler",
+        "tools": [
+          {
+            "name": "py-spy",
+            "purpose": "Production-safe profiling, flame graphs",
+            "command": "py-spy record --output baseline.svg -- python -m src.acms.controller"
+          },
+          {
+            "name": "cProfile",
+            "purpose": "Deterministic profiling, function ranking"
+          },
+          {
+            "name": "line_profiler",
+            "purpose": "Line-by-line execution time"
+          },
+          {
+            "name": "pytest-benchmark",
+            "purpose": "Performance regression tests"
+          },
+          {
+            "name": "memory_profiler",
+            "purpose": "Memory usage analysis"
+          }
+        ]
+      },
+      "validation_requirements": {
+        "pre_optimization": [
+          "Run baseline profiling",
+          "Generate flame graph",
+          "Document baseline metrics"
+        ],
+        "per_task": [
+          "Run full test suite (pytest -v --cov=src)",
+          "Profile change and document speedup %",
+          "Verify memory usage",
+          "100% coverage for modified files",
+          "Update docstrings"
+        ],
+        "post_wave": [
+          "Run performance benchmarks",
+          "Compare against targets",
+          "Generate performance report",
+          "Update documentation"
+        ]
+      },
+      "critical_files_to_modify": [
+        "src/minipipe/router.py:43-104",
+        "src/minipipe/orchestrator.py:474,692",
+        "src/acms/execution_planner.py:100-104,135-147",
+        "src/minipipe/scheduler.py:103-110,146-164",
+        "src/minipipe/patch_ledger.py:586-621",
+        "tools/profiling/profile_runner.py (create)",
+        "tools/profiling/baseline_scenarios.py (create)",
+        "tests/performance/test_performance_benchmarks.py (create)"
+      ],
+      "timeline": {
+        "week_1": {
+          "phase": "Setup + Wave 1",
+          "deliverables": ["Baseline metrics", "15-50% speedup"]
+        },
+        "week_2": {
+          "phase": "Wave 2",
+          "deliverables": ["50-80% additional speedup", "Updated benchmarks"]
+        },
+        "week_3": {
+          "phase": "Wave 3",
+          "deliverables": ["CI/CD integration", "Performance dashboard"]
+        }
+      },
+      "risk_mitigation": {
+        "rollback_strategy": [
+          "Feature branches per wave",
+          "Tag before merging (baseline-before-wave-X)",
+          "Easy rollback with git revert"
+        ],
+        "test_coverage_requirements": {
+          "overall": ">85%",
+          "modified_files": "100%",
+          "integration_tests": "All must pass",
+          "performance_tests": "Meet targets"
+        }
+      },
+      "success_criteria": {
+        "wave_1": "15-50% speedup achieved, all tests pass",
+        "wave_2": "Additional 50-80% speedup, clustering under 200ms",
+        "wave_3": "CI/CD integrated, regression tests prevent future issues",
+        "documentation": "All changes documented with profiling evidence"
+      },
+      "tags": ["performance", "audit", "profiling", "bottlenecks", "optimization", "claude-analysis"]
+    }
+  ],
+  "summary": {
+    "by_category": {
+      "governance": {
+        "documents": 1,
+        "tasks": 6,
+        "hours": 2
+      },
+      "automation": {
+        "documents": 2,
+        "tasks": 38,
+        "hours": 93
+      },
+      "bug_fixes": {
+        "documents": 1,
+        "tasks": 13,
+        "hours": 2
+      },
+      "performance": {
+        "documents": 3,
+        "tasks": 51,
+        "hours": 62.5,
+        "note": "Includes TODO_005 (floating-roaming-umbrella), TODO_006 (OPTIMIZATION_ACTION_PLAN), and TODO_007 (Claude Audit)"
+      }
+    },
+    "by_priority": {
+      "CRITICAL": {
+        "tasks": 13,
+        "hours": 4.5,
+        "documents": ["TODO_002", "TODO_003"]
+      },
+      "HIGH": {
+        "tasks": 49,
+        "hours": 147.75,
+        "documents": ["TODO_001", "TODO_004", "TODO_005", "TODO_006", "TODO_007"]
+      },
+      "MEDIUM": {
+        "tasks": 22,
+        "hours": 47.5
+      },
+      "LOW": {
+        "tasks": 24,
+        "hours": 96+
+      }
+    },
+    "by_status": {
+      "planning": {
+        "documents": ["TODO_001", "TODO_005", "TODO_006"]
+      },
+      "not_started": {
+        "documents": ["TODO_003"]
+      },
+      "phases_1_2_complete": {
+        "documents": ["TODO_002"]
+      },
+      "phase_1_complete": {
+        "documents": ["TODO_004"]
+      },
+      "completed_analysis": {
+        "documents": ["TODO_007"]
+      }
+    }
+  },
+  "recommended_execution_order": [
+    {
+      "priority": 1,
+      "phase": "IMMEDIATE (This Week)",
+      "tasks": [
+        {
+          "document": "TODO_003",
+          "tasks": ["FIX-002 pyproject.toml", "FIX-003 datetime.utcnow", "FIX-004 schema field", "FIX-005 schema path"],
+          "rationale": "Blocking issues preventing system from running",
+          "hours": 2
+        },
+        {
+          "document": "TODO_002",
+          "tasks": ["TODO-001 environment variables", "TODO-002 install dependencies", "TODO-003 test patch", "TODO-004 monitoring"],
+          "rationale": "Critical for error automation deployment",
+          "hours": 1.5
+        },
+        {
+          "document": "TODO_004",
+          "tasks": ["TODO-001 configure secrets", "TODO-002 test secrets", "TODO-003 GitHub secrets", "TODO-004 verify workflow"],
+          "rationale": "Required before Phase 2 MASTER_SPLINTER work",
+          "hours": 0.5
+        }
+      ],
+      "total_hours": 4,
+      "expected_outcome": "All systems operational and ready for enhancement work"
+    },
+    {
+      "priority": 2,
+      "phase": "WEEK 1-2",
+      "tasks": [
+        {
+          "document": "TODO_005",
+          "wave": "Wave 1 Quick Wins",
+          "tasks": ["PERF-1.1 I/O batching", "PERF-1.2 set checks", "PERF-1.3 defaultdict"],
+          "rationale": "High impact, low effort performance gains",
+          "hours": 3.5
+        },
+        {
+          "document": "TODO_002",
+          "tasks": ["TODO-005 monitor usage", "TODO-006 tune thresholds", "TODO-018 baseline metrics"],
+          "rationale": "Monitor and optimize error automation",
+          "hours": 4
+        },
+        {
+          "document": "TODO_004",
+          "tasks": ["TODO-005 branch protection", "TODO-006 notifications", "TODO-007 review Phase 2"],
+          "rationale": "Prepare for MASTER_SPLINTER Phase 2",
+          "hours": 0.75
+        }
+      ],
+      "total_hours": 8.25,
+      "expected_outcome": "15-50% performance improvement, monitoring in place"
+    },
+    {
+      "priority": 3,
+      "phase": "WEEK 3-4",
+      "tasks": [
+        {
+          "document": "TODO_004",
+          "phase": "Phase 2 Week 1",
+          "tasks": ["TODO-008A real execution", "TODO-008B GitHub API"],
+          "rationale": "Core MASTER_SPLINTER automation functionality",
+          "hours": 16
+        },
+        {
+          "document": "TODO_005",
+          "wave": "Wave 2 Algorithmic",
+          "tasks": ["PERF-2.1 priority queue", "PERF-2.2 topo sort", "PERF-2.3 cycle detection"],
+          "rationale": "Critical algorithmic improvements",
+          "hours": 11
+        }
+      ],
+      "total_hours": 27,
+      "expected_outcome": "MASTER_SPLINTER automation 60%→80%, 50-80% additional speedup"
+    },
+    {
+      "priority": 4,
+      "phase": "MONTH 2",
+      "tasks": [
+        {
+          "document": "TODO_004",
+          "phase": "Phase 2 Week 2",
+          "tasks": ["TODO-009A scheduled execution", "TODO-009B email distribution", "TODO-009C testing"],
+          "rationale": "Complete MASTER_SPLINTER Phase 2",
+          "hours": 13
+        },
+        {
+          "document": "TODO_005",
+          "wave": "Wave 3 Infrastructure",
+          "tasks": ["PERF-3.1 profiling", "PERF-3.2 regression tests", "PERF-3.3 generators"],
+          "rationale": "Continuous performance monitoring",
+          "hours": 10
+        },
+        {
+          "document": "TODO_002",
+          "tasks": ["TODO-008 security scanning", "TODO-009 test suite", "TODO-012 onboarding", "TODO-013 runbook"],
+          "rationale": "Production hardening",
+          "hours": 32
+        },
+        {
+          "document": "TODO_001",
+          "tasks": ["Implement versioning contract", "Create workflows", "Configure CODEOWNERS"],
+          "rationale": "Governance and audit trail",
+          "hours": 2
+        }
+      ],
+      "total_hours": 57,
+      "expected_outcome": "Full automation suite operational, performance optimized, governance in place"
+    }
+  ],
+  "quick_reference": {
+    "immediate_blockers": [
+      "TODO_003: Fix critical ACMS bugs (2 hours)",
+      "TODO_002: Deploy error automation (1.5 hours)",
+      "TODO_004: Configure MASTER_SPLINTER secrets (30 minutes)"
+    ],
+    "highest_impact_low_effort": [
+      "TODO_005/TODO_007 Wave 1: Performance quick wins (3.5 hours for 15-50% speedup)",
+      "TODO_006 Phase 2: Algorithmic optimizations (convert 11 O(n) to O(1))",
+      "TODO_002 TODO-001 to TODO-004: Error automation deployment (1.5 hours)"
+    ],
+    "continuous_improvements": [
+      "TODO_002 TODO-019: Monthly ROI reporting",
+      "TODO_005/TODO_007 Wave 3: Performance regression tests in CI",
+      "TODO_006 Phase 1: Continuous profiling with py-spy and cProfile",
+      "TODO_001: Document versioning enforcement"
+    ],
+    "performance_optimization_notes": {
+      "convergence": "TODO_005, TODO_006, and TODO_007 are complementary plans addressing same codebase",
+      "recommended_approach": "Use TODO_007 (Claude Audit) as primary plan - most detailed with concrete line numbers",
+      "supplementary": "TODO_006 provides measurement methodology and TODO_005 adds infrastructure tasks",
+      "total_performance_effort": "22.5 hours (TODO_005) + 40 hours (TODO_006) + 0 hours (TODO_007 analysis) = 62.5 hours estimated",
+      "expected_combined_impact": "15-80% speedup across three waves"
+    }
+  },
+  "index_metadata": {
+    "created": "2025-12-07T07:50:45Z",
+    "last_updated": "2025-12-07T08:00:20Z",
+    "created_by": "GitHub Copilot CLI",
+    "format_version": "2.0.0",
+    "schema": "combined_todo_index.schema.json",
+    "changelog": [
+      {
+        "version": "2.0.0",
+        "date": "2025-12-07T08:00:20Z",
+        "changes": [
+          "Added TODO_006: MINI_PIPE Codebase Optimization Action Plan (40 hours)",
+          "Added TODO_007: Claude Codebase Performance Audit (analysis complete)",
+          "Updated performance category: 3 documents, 51 tasks, 62.5 hours",
+          "Added performance optimization convergence notes",
+          "Identified complementary nature of three performance plans"
+        ]
+      },
+      {
+        "version": "1.0.0",
+        "date": "2025-12-07T07:50:45Z",
+        "changes": [
+          "Initial creation with 5 documents",
+          "TODO_001: Versioning Operating Contract",
+          "TODO_002: Error Automation Remaining Tasks",
+          "TODO_003: ACMS Fix Plan",
+          "TODO_004: MASTER_SPLINTER Remaining Actions",
+          "TODO_005: Performance Optimization Plan"
+        ]
+      }
+    ]
+  }
+}

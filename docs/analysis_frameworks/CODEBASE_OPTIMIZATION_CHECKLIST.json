@@ -1,0 +1,435 @@
+{
+  "prompt_id": "OPTIMIZATION_CHECKLIST_V1",
+  "version": "1.0.0",
+  "description": "Systematic checklist for finding efficiency and performance optimization opportunities in a codebase.",
+  "sources": [
+    "C:\\Users\\richg\\Downloads\\Python, PowerShell Performance Optimization.md",
+    "C:\\Users\\richg\\Downloads\\Comprehensive Gap-Finding Framework Making It Systematic and Continuous.txt",
+    "C:\\Users\\richg\\Downloads\\Codebase Efficiency and Performance Optimization Opportunities.pdf"
+  ],
+  "inputs": {
+    "repo_root": "<REPO_ROOT_PATH>",
+    "primary_languages": ["python", "powershell"],
+    "runtime_context": {
+      "environment": "<dev|staging|prod-snapshot>",
+      "approx_code_size_loc": "<INT_OR_UNKNOWN>",
+      "dominant_frameworks": ["<e.g. django>", "<e.g. fastapi>", "<e.g. custom>"]
+    }
+  },
+  "global_goals": [
+    "Identify algorithmic and data-structure inefficiencies in hot paths.",
+    "Detect excessive I/O, logging, and chatty external calls.",
+    "Spot architectural patterns that limit throughput or scalability.",
+    "Highlight missing or weak automation around profiling, testing, and quality gates.",
+    "Prioritize opportunities by impact versus effort."
+  ],
+  "phases": [
+    {
+      "phase_id": "DISCOVERY",
+      "title": "Repository & Hot Path Discovery",
+      "required": true,
+      "phase_instructions": [
+        "Inventory languages, frameworks, and major modules in the repo.",
+        "Identify main entrypoints (CLI scripts, services, scheduled jobs).",
+        "Locate existing performance tests, benchmarks, or profiling reports if present."
+      ],
+      "expected_artifacts": [
+        "module_inventory.json",
+        "entrypoints_list.json",
+        "existing_perf_docs.json"
+      ]
+    },
+    {
+      "phase_id": "PROFILING",
+      "title": "Baseline Measurement & Hotspot Identification",
+      "required": true,
+      "phase_instructions": [
+        "Run lightweight profiling on representative workloads to find hot functions, modules, and scripts.",
+        "Prefer production-like input sizes where possible.",
+        "Capture CPU and memory hotspots separately."
+      ],
+      "expected_artifacts": [
+        "cpu_hotspots.json",
+        "memory_hotspots.json",
+        "profiler_raw_output_paths.json"
+      ]
+    },
+    {
+      "phase_id": "DETAILED_ANALYSIS",
+      "title": "Smell-Based Optimization Opportunity Analysis",
+      "required": true,
+      "phase_instructions": [
+        "For each hotspot, apply the checks below that match the language and category.",
+        "Record evidence, severity, and suggested remediation at a coarse level (not full refactors)."
+      ],
+      "expected_artifacts": [
+        "optimization_findings.json"
+      ]
+    },
+    {
+      "phase_id": "RECOMMENDATIONS",
+      "title": "Prioritized Optimization Plan",
+      "required": true,
+      "phase_instructions": [
+        "Aggregate findings into a ranked list by expected impact, effort, and risk.",
+        "Flag quick wins versus deep refactors.",
+        "Emit a concise plan that can be used as an execution backlog."
+      ],
+      "expected_artifacts": [
+        "optimization_plan.json"
+      ]
+    }
+  ],
+  "check_groups": [
+    {
+      "group_id": "ALG_DS",
+      "title": "Algorithms & Data Structures",
+      "priority": "high",
+      "applies_to_languages": ["python", "powershell", "javascript", "csharp", "java"],
+      "checks": [
+        {
+          "check_id": "ALG-001",
+          "name": "Nested Loop Hotspots / Quadratic Behavior",
+          "description": "Detect deeply nested loops or O(n^2+)/O(n^3) patterns in hot functions.",
+          "detection_strategy": {
+            "required_artifacts": ["cpu_hotspots.json"],
+            "static_heuristics": [
+              "Functions in top N hotspots with nested loops greater than or equal to two levels.",
+              "Loops that iterate over entire collections multiple times.",
+              "Hot code paths where runtime grows superlinearly with input size."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "python",
+                "commands": [
+                  "python -m cProfile -o profile.out <ENTRYPOINT>",
+                  "py-spy record -o pyspy.svg -- python <ENTRYPOINT>"
+                ]
+              },
+              {
+                "language": "powershell",
+                "commands": [
+                  "Measure-Command { <ENTRYPOINT_SCRIPT> }"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "hotspot_function_name",
+            "nesting_level",
+            "estimated_complexity",
+            "sample_input_size",
+            "observed_runtime_ms"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "nesting_level >= 2 AND function_in_top_hotspots == true",
+              "estimated_complexity in ['O(n^2)', 'O(n^3)', 'worse']"
+            ],
+            "severity": "high"
+          },
+          "suggested_remediation_hints": [
+            "Look for data structures or indexes that avoid inner linear scans.",
+            "Replace nested searches with hash-based lookups or precomputed maps where possible.",
+            "Push filtering or aggregation closer to the data source (DB, API) when feasible."
+          ]
+        },
+        {
+          "check_id": "ALG-002",
+          "name": "Inefficient Membership Lookups",
+          "description": "Identify repeated membership checks on large linear collections.",
+          "detection_strategy": {
+            "static_heuristics": [
+              "In Python, occurrences of 'if x in some_list' inside loops for large lists.",
+              "Repeated calls to List.Contains in managed languages on large collections."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "python",
+                "commands": [
+                  "grep -R \"in .*\\[\" -n <REPO_ROOT_PATH>",
+                  "optional: run a static analyzer or AST-based script to find membership-in-loop patterns"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "file_path",
+            "line_number",
+            "collection_type",
+            "collection_size_hint",
+            "usage_context"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "collection_type == 'list' AND used_in_hotspot_loop == true"
+            ],
+            "severity": "medium"
+          },
+          "suggested_remediation_hints": [
+            "Replace list membership checks with set or dict where appropriate.",
+            "Precompute lookup tables outside the loop when possible."
+          ]
+        }
+      ]
+    },
+    {
+      "group_id": "IO_DB",
+      "title": "I/O, Database & Logging Efficiency",
+      "priority": "high",
+      "applies_to_languages": ["python", "powershell", "csharp", "java"],
+      "checks": [
+        {
+          "check_id": "IO-001",
+          "name": "Excessive I/O in Hot Loops",
+          "description": "Detect repeated file, network, or logging operations in tight loops along hot paths.",
+          "detection_strategy": {
+            "required_artifacts": ["cpu_hotspots.json"],
+            "static_heuristics": [
+              "File or network calls inside loops in top hotspots.",
+              "Logging statements (for example, logger.debug/info) inside high-frequency loops."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "python",
+                "commands": [
+                  "grep -R \"logger.\" -n <REPO_ROOT_PATH>",
+                  "use line_profiler to inspect time spent in log-heavy loops"
+                ]
+              },
+              {
+                "language": "powershell",
+                "commands": [
+                  "Search for Write-Host / Write-Output inside loops in key scripts"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "file_path",
+            "line_number",
+            "io_operation_type",
+            "loop_iteration_rate",
+            "approx_calls_per_second"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "io_operation_type in ['file-write', 'network-call', 'logging'] AND loop_is_hot == true"
+            ],
+            "severity": "high"
+          },
+          "suggested_remediation_hints": [
+            "Buffer writes and flush less frequently.",
+            "Batch network calls or use asynchronous patterns.",
+            "Guard logging at higher levels and avoid string construction when disabled."
+          ]
+        },
+        {
+          "check_id": "DB-001",
+          "name": "N+1 Database Query Patterns",
+          "description": "Identify code that issues a query per row or per object rather than batching or eager loading.",
+          "detection_strategy": {
+            "static_heuristics": [
+              "ORM access in loops where each iteration triggers a query.",
+              "Repeated similar SQL statements in rapid succession in logs."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "python",
+                "commands": [
+                  "scan ORM-using modules for queries in loops",
+                  "inspect SQL logs for many similar queries per request"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "data_access_layer_component",
+            "avg_queries_per_high_level_operation",
+            "sample_query_pattern",
+            "observed_latency_ms"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "avg_queries_per_high_level_operation > 5"
+            ],
+            "severity": "high"
+          },
+          "suggested_remediation_hints": [
+            "Use eager loading or joins to fetch related data in a single query.",
+            "Batch queries where single-step eager loading is not practical.",
+            "Cache stable reference data where appropriate."
+          ]
+        }
+      ]
+    },
+    {
+      "group_id": "RUNTIME_LANG",
+      "title": "Language Runtime & Concurrency Misuse",
+      "priority": "high",
+      "applies_to_languages": ["python", "powershell"],
+      "checks": [
+        {
+          "check_id": "PY-001",
+          "name": "Python GIL Misuse for CPU-Bound Work",
+          "description": "Detect CPU-bound work implemented with threads instead of processes or native extensions.",
+          "detection_strategy": {
+            "required_artifacts": ["cpu_hotspots.json"],
+            "static_heuristics": [
+              "Use of threading for heavy numerical or CPU-intensive workloads.",
+              "Hot functions doing pure Python number crunching under threading."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "python",
+                "commands": [
+                  "py-spy or cProfile to confirm CPU saturation in a single core under threaded load"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "module",
+            "threading_usage_pattern",
+            "is_cpu_bound",
+            "cores_utilized",
+            "peak_cpu_utilization_percent"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "is_cpu_bound == true AND cores_utilized <= 1 AND threading_used == true"
+            ],
+            "severity": "high"
+          },
+          "suggested_remediation_hints": [
+            "Replace threads with multiprocessing or move heavy loops into C or NumPy.",
+            "Classify workloads clearly into CPU-bound versus I/O-bound and choose concurrency accordingly."
+          ]
+        },
+        {
+          "check_id": "PS-001",
+          "name": "PowerShell Array += in Loops",
+          "description": "Detect use of the += operator to build arrays in loops (O(n^2) behavior).",
+          "detection_strategy": {
+            "static_heuristics": [
+              "Search for '*+=*' in loops in .ps1 scripts.",
+              "Flag cases where += is used on arrays inside high-iteration loops."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "powershell",
+                "commands": [
+                  "Select-String -Path <REPO_ROOT_PATH> -Pattern '\\+=\\s*' -SimpleMatch"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "script_path",
+            "line_number",
+            "loop_estimated_iterations",
+            "array_name"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "loop_estimated_iterations >= 100 AND operator_is_array_plus_equals == true"
+            ],
+            "severity": "high"
+          },
+          "suggested_remediation_hints": [
+            "Use .NET generic lists or strongly-typed collections instead of array +=.",
+            "Accumulate items in a List[T] and convert to an array at the end if needed."
+          ]
+        }
+      ]
+    },
+    {
+      "group_id": "ARCH_AUTOMATION",
+      "title": "Architecture & Automation Around Performance",
+      "priority": "medium",
+      "applies_to_languages": ["*"],
+      "checks": [
+        {
+          "check_id": "ARCH-001",
+          "name": "Synchronous Chaining in Request Pipelines",
+          "description": "Detect strictly sequential processing where steps could be executed concurrently or asynchronously.",
+          "detection_strategy": {
+            "static_heuristics": [
+              "Request handlers that perform multiple I/O-bound steps in sequence.",
+              "Lack of async/await or queuing in high-latency workflows."
+            ],
+            "tool_suggestions": []
+          },
+          "evidence_fields": [
+            "request_handler_name",
+            "number_of_sequential_steps",
+            "total_response_time_ms",
+            "parallelization_potential"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "number_of_sequential_steps >= 3 AND total_response_time_ms > 200"
+            ],
+            "severity": "medium"
+          },
+          "suggested_remediation_hints": [
+            "Introduce async I/O or background jobs for non-critical steps.",
+            "Use message queues for decoupling slow operations.",
+            "Measure end-to-end latency before and after refactor."
+          ]
+        },
+        {
+          "check_id": "AUTO-001",
+          "name": "Missing Performance Quality Gates",
+          "description": "Check for enforced commands that validate performance or prevent regressions.",
+          "detection_strategy": {
+            "static_heuristics": [
+              "Absence of performance-related checks in CI configuration.",
+              "No profiling, load tests, or benchmark commands documented or wired into pipelines."
+            ],
+            "tool_suggestions": [
+              {
+                "language": "*",
+                "commands": [
+                  "scan CI config files for performance test stages",
+                  "scan repo for benchmark or perf test directories"
+                ]
+              }
+            ]
+          },
+          "evidence_fields": [
+            "ci_config_files",
+            "has_performance_stage",
+            "perf_checks_description"
+          ],
+          "decision_criteria": {
+            "flags_issue_if": [
+              "has_performance_stage == false"
+            ],
+            "severity": "medium"
+          },
+          "suggested_remediation_hints": [
+            "Add a QUALITY_GATE-like section defining required performance checks.",
+            "Wire critical benchmarks or smoke performance tests into CI.",
+            "Fail the pipeline on obvious regressions or thresholds."
+          ]
+        }
+      ]
+    }
+  ],
+  "output_contract": {
+    "findings_array_name": "optimization_findings",
+    "finding_schema": {
+      "fields": [
+        "check_id",
+        "group_id",
+        "severity",
+        "summary",
+        "evidence",
+        "estimated_impact",
+        "estimated_effort",
+        "recommended_next_action"
+      ]
+    }
+  }
+}

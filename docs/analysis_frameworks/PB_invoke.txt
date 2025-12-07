@@ -1,0 +1,227 @@
+You are a senior automation engineer specializing in task runners and build orchestration for large, multi-language repositories.
+
+Your mission is to analyze this repository and identify concrete areas where Invoke (Python) and Invoke-Build (PowerShell) provide better solutions than the current ad-hoc or raw-script implementations.
+
+0. Context and inputs
+
+REPO_ROOT (edit this before running):
+C:\PATH\TO\Complete AI Development Pipeline – Canonical Phase Plan
+
+You also have access to the following local reference files that explain how Invoke and Invoke-Build are supposed to be used in this ecosystem:
+
+C:\Users\richg\ALL_AI\Complete AI Development Pipeline – Canonical Phase Plan\docs\DOC_reference\tools\Invoke_POWERSHELLGALLERY.md
+
+C:\Users\richg\ALL_AI\Backups\pipeline_backup_2025-11-22_164906\Complete AI Development Pipeline – Canonical Phase Plan\devdocs\phases\phase-g\INVOKE_ADOPTION.md
+
+C:\Users\richg\ALL_AI\Backups\pipeline_backup_2025-11-22_164906\Complete AI Development Pipeline – Canonical Phase Plan\aim\.AIM_ai-tools-registry\INVOKE LOCATION.txt
+
+C:\Users\richg\ALL_AI\CMD\Invoke-Build Technical Report Generation.txt
+
+C:\Users\richg\ALL_AI\CMD\Invoke_ Python Task Automation Tool.txt
+
+Before analyzing the repo:
+
+Read and internalize these files.
+
+From the Python Invoke report, understand:
+
+The @task + Context model
+
+How c.run() standardizes subprocess calls (stdout/stderr, exit codes, hide, warn, etc.)
+
+How it centralizes automation commands into a discoverable task registry.
+
+From the Invoke-Build report, understand:
+
+How PowerShell tasks, dependencies, and incremental builds work
+
+How task graphs, parallelism, and checkpoints are defined
+
+From INVOKE_ADOPTION.md, understand:
+
+The project’s Phase G goals for adopting Invoke/Invoke-Build
+
+The intended division of responsibility:
+
+High-level orchestrators (ACMS, MINI_PIPE, etc.) stay in place
+
+Invoke/Invoke-Build become standardized “task runners” under them
+
+From the PowerShell Gallery and LOCATION docs, understand:
+
+How Invoke-Build modules are meant to be published/consumed
+
+Where invoke is installed and how that affects environment assumptions
+
+Treat these files as the authoritative reference for “how this project wants to use Invoke/Invoke-Build.”
+
+1. Discovery: where are ad-hoc scripts and manual flows?
+
+Scan the repo rooted at REPO_ROOT and identify:
+
+Standalone scripts that look like “one-off tools” or manual flows:
+
+*.py, *.ps1, and other CLI scripts that:
+
+Parse sys.argv or $args directly
+
+Contain multiple, sequential steps (lint → test → build → deploy, etc.)
+
+Have environment-specific paths or hard-coded commands
+
+Multi-step workflows currently documented as “run these commands in this order”:
+
+README instructions
+
+Devdocs and how-to files
+
+Phase docs that describe sequences like:
+
+“First run script A, then B, then C…”
+
+Places where ACMS / MINI_PIPE / other orchestrators currently:
+
+Call raw scripts directly
+
+Maintain their own ad-hoc sequences of shell commands
+
+Handle error logic or retries manually per script
+
+Produce a short summary of the main categories of current automation (e.g., “PS scripts for build & test”, “Python scripts for linting and repo scans”, “manual git workflows”, etc.).
+
+2. Criteria: when is Invoke / Invoke-Build strictly better?
+
+Use the reference docs to apply these evaluation criteria:
+
+Task model & discoverability
+Prefer Invoke / Invoke-Build when:
+
+A script is essentially a “named task” that developers or AI agents need to run by name.
+
+There is no central “task registry” for automation commands.
+
+You want invoke -l / Invoke-Build ? to list capabilities instead of hunting through scripts.
+
+Composition and orchestration
+Prefer Invoke / Invoke-Build when:
+
+A workflow is “do A, then B, then C” across multiple scripts.
+
+There are repeated sequences of the same commands in scripts, docs, or logs.
+
+The repo would benefit from:
+
+Dependencies between tasks
+
+Parallel execution
+
+Incremental builds or caching
+
+Error handling and determinism at the command layer
+Prefer Invoke / Invoke-Build when:
+
+Each script has its own slightly different subprocess / error handling logic.
+
+Exit code checking, logging, and retries are inconsistent.
+
+You want a single canonical way to run external commands and handle failures.
+
+Local configuration vs. core pipeline
+Prefer invoking tasks through Invoke / Invoke-Build when:
+
+You need an easy way for user-local overrides (e.g., models, paths, dry-run, retry counts) via .invoke.yaml.
+
+The current approach requires editing core scripts to make minor local tweaks.
+
+Scope boundary with ACMS / MINI_PIPE
+When you find a candidate, do not propose replacing ACMS / MINI_PIPE.
+Instead, propose:
+
+Keeping ACMS / MINI_PIPE as the high-level, pattern-first orchestrators
+
+Refactoring underlying scripts into Invoke / Invoke-Build tasks
+
+Having ACMS / MINI_PIPE call those tasks instead of raw scripts
+
+3. Required output structure
+
+Return your findings as a Markdown table plus a concise narrative summary.
+
+3.1 Markdown table
+
+Each row should capture a specific improvement opportunity:
+
+id	area_or_file	current_implementation	why_invoke_is_better	recommended_invoke_design	integration_with_acms_or_minipipe	effort_risk_level
+
+Where:
+
+id: short stable identifier like INV-001, INV-002, ...
+
+area_or_file: specific script, folder, or workflow (e.g., scripts/build_phase.ps1, docs/Phase-3.md pipeline, MINI_PIPE_executor -> test workflow).
+
+current_implementation: brief description of what exists now (1–3 sentences).
+
+why_invoke_is_better: concrete justification tied to the criteria above:
+
+task registry / discoverability
+
+composition / dependencies
+
+standardized error handling
+
+local config via .invoke.yaml
+
+recommended_invoke_design: how to reshape this into Invoke / Invoke-Build:
+
+For Python: example tasks, rough tasks.py structure, use of Context.run.
+
+For PowerShell: example Invoke-Build tasks, dependencies, incremental targets.
+
+integration_with_acms_or_minipipe:
+
+How the high-level orchestrators should call these tasks instead of raw scripts.
+
+Any needed changes to patterns, configs, or phase plans.
+
+effort_risk_level: one of Low, Medium, High, based on:
+
+Script complexity
+
+Coupling to other parts of the system
+
+Potential disruption to existing workflows
+
+3.2 Narrative summary
+
+After the table, add a short narrative (5–10 paragraphs max) that:
+
+Groups the opportunities into themes (e.g., “build/test consolidation”, “repo scans and linting”, “CI-like task graphs”).
+
+Highlights the top 3–5 “low effort / high impact” refactors to prioritize first.
+
+Calls out any areas where:
+
+Invoke / Invoke-Build do not add clear value beyond the current solution.
+
+Existing ACMS / MINI_PIPE logic should stay as-is and only call into Invoke/Invoke-Build minimally.
+
+4. Constraints and style
+
+Be specific and concrete. Prefer naming actual files, folders, and scripts rather than speaking in generalities.
+
+Assume the end consumer is an AI-enabled CLI application that will turn your recommendations into:
+
+Refactoring plans
+
+New tasks
+
+Updated orchestrator patterns
+
+Your goal is to help that CLI systematically migrate suitable automation from:
+
+Ad-hoc scripts and manual sequences
+to
+
+Standardized Invoke / Invoke-Build tasks, called by existing orchestrators.
+
+Do not propose replacing the entire orchestration system; focus solely on where Invoke and Invoke-Build provide strictly better primitives than the current script-level implementations.

@@ -1,0 +1,62 @@
+# Invoke Configuration for MINI_PIPE
+# DOC_ID: DOC-INVOKE-CONFIG-001
+
+# Runner configuration (Windows compatibility)
+run:
+  # Use PowerShell as the shell on Windows for better command compatibility
+  shell: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+  # Alternative: Use cmd.exe
+  # shell: "C:\\Windows\\System32\\cmd.exe /c"
+  
+  # Don't use PTY on Windows (not supported)
+  pty: false
+  
+  # Echo commands before running (helpful for debugging)
+  echo: false
+  
+  # Environment handling
+  replace_env: false
+
+# Tool configurations (Phase G - INV-012)
+tools:
+  pytest:
+    timeout: 600
+    parallel: true
+    coverage: true
+    flags:
+      - "-q"
+      - "-n auto"
+  
+  black:
+    max_line_length: 120
+    target_version: "py310"
+  
+  flake8:
+    max_line_length: 120
+    ignore:
+      - "E203"
+      - "W503"
+  
+  isort:
+    profile: "black"
+    line_length: 120
+  
+  mypy:
+    flags:
+      - "--ignore-missing-imports"
+      - "--no-strict-optional"
+
+# Orchestrator settings
+orchestrator:
+  dry_run: false
+  max_retries: 3
+  timeout: 300
+
+# Path configuration
+paths:
+  repo_root: "."
+  src_dir: "src"
+  tests_dir: "tests"
+  logs_dir: "logs"
+  state_dir: "state"
+  acms_runs_dir: ".acms_runs"
