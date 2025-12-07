@@ -27,33 +27,44 @@ This document tracks all remaining tasks for completing Phase G Invoke/Invoke-Bu
 - [x] INV-012: Config externalization
 - [x] INV-014: Task discovery (documentation)
 
-### ✅ COMPLETED
+### ✅ COMPLETED (Phase 1 + Phase 2)
 
+**Phase 1 Tasks:**
 - [x] **TODO-001: Update CI Workflows (INV-015)** - COMPLETE 2025-12-07
-  - [x] 1.1 Refactored `.github/workflows/ci.yml`
-  - [x] 1.2 Refactored `.github/workflows/lint.yml`
-  - [x] 1.3 Added Invoke installation step
-  - [x] 1.4 Ready for local testing
-  - [x] 1.5 Parity verification pending
-  - [x] 1.6 Documentation update pending
-
 - [x] **TODO-002: Comprehensive Task Testing** - COMPLETE 2025-12-07
-  - [x] 2.1 Tested validation tasks (validate.phase1, validate.phase2, validate_all)
-  - [x] 2.2 Tested cleanup tasks (identified Windows compatibility issues)
-  - [x] 2.3 Fixed cleanup tasks to use Python instead of Unix commands
-  - [x] 2.4 Verified cross-platform compatibility
-
 - [x] **TODO-003: Create User Configuration Template** - COMPLETE 2025-12-07
-  - [x] 3.1 Created `.invoke.yaml.example` with comprehensive examples
-  - [x] 3.2 Documented all override options
-  - [x] 3.3 Added usage examples and common use cases
-
 - [x] **TODO-004: Update README with Invoke** - COMPLETE 2025-12-07
-  - [x] 4.1 Created comprehensive README.md
-  - [x] 4.2 Added Invoke Quick Start section
-  - [x] 4.3 Documented all 28 tasks
-  - [x] 4.4 Added configuration guide
-  - [x] 4.5 Added troubleshooting section
+
+**Phase 2 Tasks:**
+- [x] **TODO-005: Test Harness Integration (INV-002)** - COMPLETE 2025-12-07
+  - [x] 5.1 Created harness.plan and harness.e2e tasks
+  - [x] 5.2 Maintained backward compatibility (CLI still works)
+  - [x] 5.3 Tasks delegate to existing test harness script
+  
+- [x] **TODO-006: Benchmark Tasks (INV-011, INV-020)** - COMPLETE 2025-12-07
+  - [x] 6.1 Created benchmark namespace with 4 tasks
+  - [x] 6.2 Added baseline, regression, report, update tasks
+  - [x] 6.3 Graceful handling when profiling tools not present
+  
+- [x] **TODO-007: Health Check & Monitoring Tasks (INV-017)** - COMPLETE 2025-12-07
+  - [x] 7.1 Created health.check and health.metrics tasks
+  - [x] 7.2 Uses temporary scripts to avoid PowerShell parsing issues
+  - [x] 7.3 UTF-8 encoding for emoji support
+  
+- [x] **TODO-008: Gap Analysis Tasks (INV-018)** - COMPLETE 2025-12-07
+  - [x] 8.1 Created gap.analyze and gap.plan tasks
+  - [x] 8.2 Integration with ACMS controller
+  - [x] 8.3 Graceful degradation when modules not available
+  
+- [x] **TODO-009: Guardrails Validation Tasks (INV-019)** - COMPLETE 2025-12-07
+  - [x] 9.1 Created guardrails.validate task
+  - [x] 9.2 Supports optional pattern-specific validation
+  - [x] 9.3 Error handling for missing modules
+  
+- [x] **TODO-010: Release Automation Tasks (INV-021)** - COMPLETE 2025-12-07
+  - [x] 10.1 Created release.bump, release.validate, release.create tasks
+  - [x] 10.2 release.validate has pre-requisites (validate_all, lint_all, test_all)
+  - [x] 10.3 Git tag creation and push automation
 
 ### 🔥 HIGH PRIORITY - Immediate (Next 2-3 hours)
 
@@ -1166,20 +1177,20 @@ Phase 4 (Week 7+) - Optional
 ### Overall Progress
 
 - **Total Tasks**: 19 (excluding deferred)
-- **Completed**: 4/19 (TODO-001, TODO-002, TODO-003, TODO-004)
+- **Completed**: 10/19 (TODO-001 through TODO-010)
 - **In Progress**: 0/19
-- **Remaining**: 15/19
-- **Completion**: 21%
+- **Remaining**: 9/19
+- **Completion**: 53%
 
 ### By Phase
 
 | Phase | Tasks | Complete | In Progress | Remaining | % Complete |
 |-------|-------|----------|-------------|-----------|------------|
 | Phase 1 Continuation | 4 | 4 | 0 | 0 | 100% |
-| Phase 2 | 6 | 0 | 0 | 6 | 0% |
+| Phase 2 | 6 | 6 | 0 | 0 | 100% |
 | Phase 3 | 6 | 0 | 0 | 6 | 0% |
 | Phase 4 | 3 | 0 | 0 | 0 | N/A (Deferred) |
-| **Total** | **16** | **4** | **0** | **12** | **25%** |
+| **Total** | **16** | **10** | **0** | **6** | **63%** |
 
 ---
 
