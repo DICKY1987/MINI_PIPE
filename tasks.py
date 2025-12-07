@@ -462,11 +462,16 @@ def clean_pycache(c):
     """Remove Python cache files (__pycache__, *.pyc)."""
     print("🧹 Removing Python cache files...")
     
-    # Find and remove __pycache__ directories
-    c.run("find . -type d -name '__pycache__' -exec rm -rf {} + 2>/dev/null || true", warn=True)
+    import shutil
+    from pathlib import Path
     
-    # Find and remove .pyc files
-    c.run("find . -type f -name '*.pyc' -delete 2>/dev/null || true", warn=True)
+    # Remove __pycache__ directories
+    for pycache_dir in Path('.').rglob('__pycache__'):
+        shutil.rmtree(pycache_dir, ignore_errors=True)
+    
+    # Remove .pyc files
+    for pyc_file in Path('.').rglob('*.pyc'):
+        pyc_file.unlink(missing_ok=True)
     
     print("✅ Python cache files removed")
 
@@ -475,7 +480,14 @@ def clean_pycache(c):
 def clean_logs(c):
     """Remove log files."""
     print("🧹 Removing log files...")
-    c.run("rm -rf logs/*.log 2>/dev/null || true", warn=True)
+    
+    from pathlib import Path
+    
+    logs_dir = Path('logs')
+    if logs_dir.exists():
+        for log_file in logs_dir.glob('*.log'):
+            log_file.unlink(missing_ok=True)
+    
     print("✅ Log files removed")
 
 
@@ -484,17 +496,24 @@ def clean_state(c):
     """Remove state databases and test caches."""
     print("🧹 Removing state files and caches...")
     
+    import shutil
+    from pathlib import Path
+    
     items = [
-        "state/*.db",
-        ".benchmarks",
-        ".pytest_cache",
-        "coverage.xml",
-        ".coverage",
-        "htmlcov"
+        Path("state").glob("*.db"),
+        [Path(".benchmarks")],
+        [Path(".pytest_cache")],
+        [Path("coverage.xml")],
+        [Path(".coverage")],
+        [Path("htmlcov")]
     ]
     
-    for item in items:
-        c.run(f"rm -rf {item} 2>/dev/null || true", warn=True)
+    for item_group in items:
+        for item in item_group:
+            if item.is_file():
+                item.unlink(missing_ok=True)
+            elif item.is_dir():
+                shutil.rmtree(item, ignore_errors=True)
     
     print("✅ State files and caches removed")
 
@@ -503,7 +522,18 @@ def clean_state(c):
 def clean_acms_runs(c):
     """Remove ACMS run directories."""
     print("🧹 Removing ACMS run directories...")
-    c.run("rm -rf .acms_runs/* 2>/dev/null || true", warn=True)
+    
+    import shutil
+    from pathlib import Path
+    
+    acms_runs_dir = Path('.acms_runs')
+    if acms_runs_dir.exists():
+        for item in acms_runs_dir.iterdir():
+            if item.is_file():
+                item.unlink(missing_ok=True)
+            elif item.is_dir():
+                shutil.rmtree(item, ignore_errors=True)
+    
     print("✅ ACMS run directories removed")
 
 
