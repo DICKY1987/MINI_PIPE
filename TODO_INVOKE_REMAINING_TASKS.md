@@ -55,6 +55,13 @@ This document tracks all remaining tasks for completing Phase G Invoke/Invoke-Bu
   - [x] 4.4 Added configuration guide
   - [x] 4.5 Added troubleshooting section
 
+- [x] **TODO-005: Test Harness Integration (INV-002)** - COMPLETE 2025-12-07
+  - [x] 5.1 Created harness.plan and harness.e2e tasks in tasks.py
+  - [x] 5.2 Maintained backward compatibility (acms_test_harness.py still works)
+  - [x] 5.3 Tested harness.plan with existing spec (6 steps validated)
+  - [x] 5.4 Added to task collection with proper namespacing
+  - [x] 5.5 Documentation in task docstrings
+
 ### 🔥 HIGH PRIORITY - Immediate (Next 2-3 hours)
 
 #### TODO-001: Update CI Workflows (INV-015)
@@ -1166,20 +1173,20 @@ Phase 4 (Week 7+) - Optional
 ### Overall Progress
 
 - **Total Tasks**: 19 (excluding deferred)
-- **Completed**: 4/19 (TODO-001, TODO-002, TODO-003, TODO-004)
+- **Completed**: 5/19 (TODO-001, TODO-002, TODO-003, TODO-004, TODO-005)
 - **In Progress**: 0/19
-- **Remaining**: 15/19
-- **Completion**: 21%
+- **Remaining**: 14/19
+- **Completion**: 26%
 
 ### By Phase
 
 | Phase | Tasks | Complete | In Progress | Remaining | % Complete |
 |-------|-------|----------|-------------|-----------|------------|
 | Phase 1 Continuation | 4 | 4 | 0 | 0 | 100% |
-| Phase 2 | 6 | 0 | 0 | 6 | 0% |
+| Phase 2 | 6 | 1 | 0 | 5 | 17% |
 | Phase 3 | 6 | 0 | 0 | 6 | 0% |
 | Phase 4 | 3 | 0 | 0 | 0 | N/A (Deferred) |
-| **Total** | **16** | **4** | **0** | **12** | **25%** |
+| **Total** | **16** | **5** | **0** | **11** | **31%** |
 
 ---
 

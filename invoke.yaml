@@ -18,7 +18,9 @@ run:
   replace_env: false
 
 # Tool configurations (Phase G - INV-012)
+# Expanded in Phase 3 with UET tool profiles
 tools:
+  # Testing tools
   pytest:
     timeout: 600
     parallel: true
@@ -27,24 +29,117 @@ tools:
       - "-q"
       - "-n auto"
   
+  # Linting and formatting tools
   black:
+    binary: "black"
     max_line_length: 120
     target_version: "py310"
+    timeout: 60
   
   flake8:
+    binary: "flake8"
     max_line_length: 120
+    timeout: 60
     ignore:
       - "E203"
       - "W503"
   
   isort:
+    binary: "isort"
     profile: "black"
     line_length: 120
+    timeout: 60
   
   mypy:
+    binary: "mypy"
+    timeout: 120
     flags:
       - "--ignore-missing-imports"
       - "--no-strict-optional"
+  
+  ruff:
+    binary: "ruff"
+    timeout: 60
+    config: "pyproject.toml"
+    flags:
+      - "check"
+  
+  # AI-powered coding tools (UET - Phase 3)
+  aider:
+    binary: "aider"
+    timeout: 300
+    flags:
+      - "--yes-always"
+      - "--no-auto-commits"
+    model: "gpt-4"  # Override with AIDER_MODEL env var
+  
+  codex:
+    binary: "python"
+    timeout: 120
+    # Codex is typically accessed via API, not CLI
+  
+  copilot:
+    # GitHub Copilot CLI
+    binary: "gh"
+    timeout: 60
+    flags:
+      - "copilot"
+      - "suggest"
+  
+  # Code analysis tools
+  pylint:
+    binary: "pylint"
+    timeout: 120
+    config: "pyproject.toml"
+  
+  bandit:
+    binary: "bandit"
+    timeout: 60
+    flags:
+      - "-r"
+  
+  # Documentation tools
+  sphinx:
+    binary: "sphinx-build"
+    timeout: 120
+    flags:
+      - "-W"  # Treat warnings as errors
+      - "-b html"
+  
+  mkdocs:
+    binary: "mkdocs"
+    timeout: 60
+  
+  # Git tools
+  git:
+    binary: "git"
+    timeout: 30
+  
+  # Build tools
+  pip:
+    binary: "pip"
+    timeout: 300
+  
+  poetry:
+    binary: "poetry"
+    timeout: 300
+  
+  # Profiling tools (Phase 2 benchmark tasks)
+  pytest-benchmark:
+    binary: "pytest"
+    timeout: 600
+    flags:
+      - "--benchmark-only"
+      - "-v"
+  
+  # Generic shell commands
+  shell:
+    binary: "sh"
+    timeout: 60
+  
+  powershell:
+    binary: "powershell"
+    timeout: 60
 
 # Orchestrator settings
 orchestrator:

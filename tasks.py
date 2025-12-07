@@ -638,6 +638,335 @@ cleanup.add_task(clean_acms_runs, 'acms-runs')
 cleanup.add_task(clean_all, 'all')
 ns.add_collection(cleanup)
 
+# =============================================================================
+# ACMS Test Harness Tasks (INV-002)
+# =============================================================================
+
+@task
+def harness_plan(c, repo_root=".", spec_path="config/process_steps.json"):
+    """Validate process-steps spec.
+    
+    Args:
+        repo_root: Repository root directory (default: current directory)
+        spec_path: Path to process steps spec (default: config/process_steps.json)
+    """
+    from pathlib import Path
+    from acms_test_harness import load_process_spec, validate_process_spec
+    
+    repo_root = Path(repo_root).resolve()
+    spec_path_obj = Path(spec_path)
+    if not spec_path_obj.is_absolute():
+        spec_path_obj = repo_root / spec_path
+    
+    if not spec_path_obj.exists():
+        print(f"❌ Spec not found: {spec_path_obj}")
+        raise SystemExit(1)
+    
+    spec = load_process_spec(spec_path_obj)
+    errors = validate_process_spec(spec)
+    
+    if errors:
+        print("❌ Spec validation failed:")
+        for err in errors:
+            print(f"  - {err}")
+        raise SystemExit(1)
+    
+    print(f"✅ Spec OK ({len(spec.get('steps', []))} steps)")
+
+
+@task
+def harness_e2e(c, repo_root, mode="full", spec_path="config/process_steps.json"):
+    """Run ACMS pipeline and check postconditions.
+    
+    Args:
+        repo_root: Repository root directory (required)
+        mode: Pipeline mode (full, analyze_only, plan_only, execute_only)
+        spec_path: Path to process steps spec
+    """
+    from pathlib import Path
+    from acms_test_harness import (
+        load_process_spec,
+        validate_process_spec,
+        run_acms_pipeline,
+        evaluate_spec
+    )
+    
+    repo_root = Path(repo_root).resolve()
+    spec_path_obj = Path(spec_path)
+    if not spec_path_obj.is_absolute():
+        spec_path_obj = repo_root / spec_path
+    
+    if not spec_path_obj.exists():
+        print(f"❌ Spec not found: {spec_path_obj}")
+        raise SystemExit(1)
+    
+    # Validate spec
+    spec = load_process_spec(spec_path_obj)
+    errors = validate_process_spec(spec)
+    if errors:
+        print("❌ Spec validation failed:")
+        for err in errors:
+            print(f"  - {err}")
+        raise SystemExit(1)
+    
+    # Run pipeline
+    print(f"Running ACMS pipeline in mode: {mode}")
+    run_id, run_dir, state = run_acms_pipeline(repo_root, mode)
+    
+    print(f"✓ Run ID: {run_id}")
+    print(f"✓ Run dir: {run_dir}")
+    print(f"✓ Pipeline status: {state.get('final_status', 'unknown')}")
+    print()
+    
+    # Evaluate postconditions
+    results = evaluate_spec(spec, repo_root, run_dir, run_id, state)
+    failures = [r for r in results if not r.passed]
+    
+    for res in results:
+        prefix = "✅ PASS" if res.passed else "❌ FAIL"
+        print(f"{prefix} {res.step_id}: {res.detail}")
+    
+    if failures:
+        print(f"\n❌ {len(failures)} step(s) failed")
+        raise SystemExit(1)
+    else:
+        print(f"\n✅ All {len(results)} steps passed")
+
+
+# =============================================================================
+# Performance Benchmark Tasks (INV-011, INV-020)
+# =============================================================================
+
+@task
+def benchmark_baseline(c, scenario="all"):
+    """Capture performance baseline for regression testing.
+    
+    Args:
+        scenario: Which scenario to run (all, small, medium, large)
+    """
+    print(f"📊 Running baseline performance scenario: {scenario}")
+    
+    if scenario in ["all", "small"]:
+        print("  → Small clustering (10 gaps)")
+        c.run("python tools/profiling/baseline_scenarios.py small", pty=False, warn=True)
+    
+    if scenario in ["all", "medium"]:
+        print("  → Medium clustering (50 gaps)")
+        c.run("python tools/profiling/baseline_scenarios.py medium", pty=False, warn=True)
+    
+    if scenario in ["all", "large"]:
+        print("  → Large clustering (200 gaps)")
+        c.run("python tools/profiling/baseline_scenarios.py large", pty=False, warn=True)
+    
+    print("✅ Baseline scenarios complete")
+
+
+@task
+def benchmark_regression(c):
+    """Run performance regression tests against baseline.
+    
+    Uses pytest-benchmark to compare current performance against saved baselines.
+    """
+    print("📊 Running performance regression tests...")
+    
+    # Check if pytest-benchmark is installed
+    result = c.run("python -c \"import pytest_benchmark\"", warn=True, hide=True, pty=False)
+    if result.exited != 0:
+        print("⚠ pytest-benchmark not installed. Installing...")
+        c.run("pip install pytest-benchmark", pty=False)
+    
+    # Run performance tests with benchmark
+    result = c.run(
+        "pytest tests/performance/ --benchmark-only -v",
+        warn=True,
+        pty=False
+    )
+    
+    if result.exited == 0:
+        print("✅ All performance tests passed")
+    else:
+        print("❌ Performance regression detected")
+        raise SystemExit(1)
+
+
+@task
+def benchmark_compare(c):
+    """Compare current benchmarks with baseline."""
+    print("📊 Comparing benchmarks with baseline...")
+    
+    baseline_path = Path(".benchmarks/baseline.json")
+    if not baseline_path.exists():
+        print("⚠ No baseline found. Run 'inv benchmark.baseline' first.")
+        print("  Creating baseline now...")
+        benchmark_baseline(c)
+        return
+    
+    # Run pytest-benchmark compare
+    c.run(
+        "pytest-benchmark compare --group-by=func",
+        warn=True,
+        pty=False
+    )
+
+
+@task
+def benchmark_update_baseline(c, scenario="all"):
+    """Update performance baseline (commit result to git).
+    
+    Args:
+        scenario: Which scenario to update (all, small, medium, large)
+    """
+    print("📊 Updating performance baseline...")
+    
+    # Run baseline scenarios
+    benchmark_baseline(c, scenario)
+    
+    # Check if .benchmarks directory exists
+    benchmarks_dir = Path(".benchmarks")
+    if benchmarks_dir.exists() and any(benchmarks_dir.iterdir()):
+        print("📝 Committing baseline to git...")
+        c.run("git add .benchmarks/", pty=False)
+        c.run("git commit -m 'chore: update performance baseline' --no-verify", 
+              warn=True, pty=False)
+        print("✅ Baseline updated and committed")
+    else:
+        print("⚠ No benchmark data found to commit")
+
+
+# =============================================================================
+# Health Check & Monitoring Tasks (INV-017)
+# =============================================================================
+
+@task
+def health_check(c):
+    """Run system health check and display status report.
+    
+    Checks:
+    - Recent pipeline runs
+    - Success rate
+    - Consecutive failures
+    - Average duration
+    - Active alerts
+    """
+    print("🏥 Running ACMS health check...")
+    print()
+    
+    result = c.run("""
+python -c "
+from pathlib import Path
+from src.acms.monitoring import create_monitoring_system
+
+# Create monitoring system
+collector, health_monitor, _ = create_monitoring_system(Path('.'))
+
+# Generate and display health report
+report = health_monitor.generate_health_report()
+print(report)
+
+# Get health status for exit code
+health = health_monitor.check_health()
+exit(0 if health.status in ['healthy', 'degraded'] else 1)
+"
+    """, warn=True, pty=False)
+    
+    if result.exited == 0:
+        print()
+        print("✅ Health check passed")
+    else:
+        print()
+        print("❌ Health check failed - system unhealthy")
+        raise SystemExit(1)
+
+
+@task
+def metrics_report(c, days=7):
+    """Generate metrics report for specified time period.
+    
+    Args:
+        days: Number of days to include in report (default: 7)
+    """
+    print(f"📊 Generating metrics report for last {days} days...")
+    print()
+    
+    c.run(f"""
+python -c "
+from pathlib import Path
+from src.acms.monitoring import create_monitoring_system
+
+# Create monitoring system
+collector, _, _ = create_monitoring_system(Path('.'))
+
+# Get metrics summary
+summary = collector.get_metrics_summary(days={days})
+
+print('=' * 70)
+print(f'METRICS SUMMARY - Last {days} Days')
+print('=' * 70)
+print()
+print(f'Total Runs: {{summary[\\"total_runs\\"]}}')
+print(f'Success Rate: {{summary[\\"success_rate\\"]:.1f}}%')
+print(f'Average Duration: {{summary[\\"avg_duration\\"]:.1f}}s')
+print(f'Total Tasks: {{summary[\\"total_tasks_executed\\"]}}')
+print(f'Failed Tasks: {{summary[\\"total_tasks_failed\\"]}}')
+print(f'Gaps Discovered: {{summary[\\"total_gaps_discovered\\"]}}')
+print(f'Gaps Fixed: {{summary[\\"total_gaps_fixed\\"]}}')
+print()
+
+# Get recent runs
+recent = collector.get_recent_runs(limit=10)
+if recent:
+    print('Recent Runs:')
+    for run in recent:
+        status = '✅' if run.success else '❌'
+        print(f'  {{status}} {{run.run_id}} - {{run.duration_seconds:.1f}}s')
+"
+    """, pty=False)
+    
+    print()
+    print("✅ Metrics report complete")
+
+
+@task
+def metrics_trends(c, days=30):
+    """Analyze performance trends over time.
+    
+    Args:
+        days: Number of days to analyze (default: 30)
+    """
+    print(f"📈 Analyzing performance trends for last {days} days...")
+    print()
+    
+    c.run(f"""
+python -c "
+from pathlib import Path
+from src.acms.monitoring import create_monitoring_system
+
+# Create monitoring system
+_, _, performance_tracker = create_monitoring_system(Path('.'))
+
+# Analyze trends
+trends = performance_tracker.analyze_trends(days={days})
+
+print('=' * 70)
+print(f'PERFORMANCE TRENDS - Last {days} Days')
+print('=' * 70)
+print()
+print(f'Duration Trend: {{trends[\\"duration_trend\\"]}}')
+print(f'Success Rate Trend: {{trends[\\"success_rate_trend\\"]}}')
+print(f'Task Count Trend: {{trends[\\"task_count_trend\\"]}}')
+print()
+
+if 'recommendations' in trends:
+    print('Recommendations:')
+    for rec in trends['recommendations']:
+        print(f'  • {{rec}}')
+"
+    """, pty=False)
+    
+    print()
+    print("✅ Trend analysis complete")
+
+
 # Add top-level convenience tasks
 ns.add_task(install)
 ns.add_task(install_dev, 'install-dev')
@@ -645,6 +974,27 @@ ns.add_task(bootstrap)
 ns.add_task(reset)
 ns.add_task(ci)
 ns.add_task(pre_commit, 'pre-commit')
+
+# Add test harness tasks
+harness = Collection('harness')
+harness.add_task(harness_plan, 'plan')
+harness.add_task(harness_e2e, 'e2e')
+ns.add_collection(harness)
+
+# Add benchmark tasks
+benchmark = Collection('benchmark')
+benchmark.add_task(benchmark_baseline, 'baseline')
+benchmark.add_task(benchmark_regression, 'regression')
+benchmark.add_task(benchmark_compare, 'compare')
+benchmark.add_task(benchmark_update_baseline, 'update-baseline')
+ns.add_collection(benchmark)
+
+# Add health & monitoring tasks
+health = Collection('health')
+health.add_task(health_check, 'check')
+health.add_task(metrics_report, 'metrics')
+health.add_task(metrics_trends, 'trends')
+ns.add_collection(health)
 
 # Also add common tasks at root level for convenience
 ns.add_task(validate_all)

@@ -24,8 +24,12 @@ from typing import Dict, List, Optional
 
 
 @dataclass
-class ValidationResult:
-    """Patch validation results"""
+class PatchValidationResult:
+    """Patch validation results.
+    
+    Used by PatchLedger to track whether patches meet quality standards.
+    NOT for task execution validation (see TaskValidationResult in acms.result_validation).
+    """
 
     format_ok: bool = False
     scope_ok: bool = False
@@ -85,6 +89,7 @@ class PatchLedger:
     VALID_STATES = {
         "created",
         "validated",
+        "awaiting_review",  # NEW: Patch requires manual review
         "queued",
         "applied",
         "apply_failed",
@@ -99,7 +104,8 @@ class PatchLedger:
 
     STATE_TRANSITIONS = {
         "created": ["validated", "apply_failed", "quarantined", "dropped"],
-        "validated": ["queued", "quarantined", "dropped"],
+        "validated": ["queued", "awaiting_review", "quarantined", "dropped"],  # Can go to review
+        "awaiting_review": ["queued", "dropped"],  # After review decision
         "queued": ["applied", "apply_failed", "quarantined", "dropped"],
         "applied": [
             "verified",
@@ -160,7 +166,7 @@ class PatchLedger:
         ledger_id: str,
         patch_id: str,
         project_id: str,
-        validation: Optional[ValidationResult] = None,
+        validation: Optional[PatchValidationResult] = None,
         phase_id: Optional[str] = None,
         workstream_id: Optional[str] = None,
         execution_request_id: Optional[str] = None,
@@ -181,7 +187,7 @@ class PatchLedger:
             ledger_id
         """
         if validation is None:
-            validation = ValidationResult()
+            validation = PatchValidationResult()
 
         now = datetime.now(UTC).isoformat()
 
@@ -283,7 +289,7 @@ class PatchLedger:
             (json.dumps(history), ledger_id),
         )
 
-    def validate_patch(self, ledger_id: str, validation: ValidationResult) -> bool:
+    def validate_patch(self, ledger_id: str, validation: PatchValidationResult) -> bool:
         """
         Validate patch (created -> validated or apply_failed).
 
@@ -638,6 +644,134 @@ class PatchLedger:
 
         for row in self.db.conn.execute(query, params):
             yield self._row_to_dict(row)
+
+    def mark_for_review(
+        self,
+        ledger_id: str,
+        reviewer: Optional[str] = None,
+        review_reason: Optional[str] = None,
+    ) -> bool:
+        """
+        Mark a patch as requiring manual review.
+        
+        Args:
+            ledger_id: Patch ledger ID
+            reviewer: Optional reviewer name/ID
+            review_reason: Optional reason for review
+        
+        Returns:
+            True if marked for review successfully
+        """
+        # Get current entry
+        entry = self.get_entry(ledger_id)
+        if not entry:
+            return False
+        
+        # Must be in validated state
+        if entry["state"] != "validated":
+            return False
+        
+        # Update metadata
+        metadata = json.loads(entry["metadata"]) if entry["metadata"] else {}
+        metadata.update({
+            "manual_review_required": True,
+            "review_status": "pending",
+            "review_requested_at": datetime.now(UTC).isoformat() + "Z",
+            "reviewer": reviewer,
+            "review_reason": review_reason,
+        })
+        
+        # Transition to awaiting_review
+        return self.transition_state(ledger_id, "awaiting_review", metadata)
+    
+    def approve_patch(
+        self,
+        ledger_id: str,
+        reviewer: str,
+        comment: Optional[str] = None,
+    ) -> bool:
+        """
+        Approve a patch after review.
+        
+        Args:
+            ledger_id: Patch ledger ID
+            reviewer: Reviewer name/ID
+            comment: Optional approval comment
+        
+        Returns:
+            True if approved successfully
+        """
+        entry = self.get_entry(ledger_id)
+        if not entry or entry["state"] != "awaiting_review":
+            return False
+        
+        # Update metadata
+        metadata = json.loads(entry["metadata"]) if entry["metadata"] else {}
+        metadata.update({
+            "review_status": "approved",
+            "reviewed_by": reviewer,
+            "reviewed_at": datetime.now(UTC).isoformat() + "Z",
+            "review_comment": comment,
+        })
+        
+        # Transition to queued
+        return self.transition_state(ledger_id, "queued", metadata)
+    
+    def reject_patch(
+        self,
+        ledger_id: str,
+        reviewer: str,
+        reason: str,
+    ) -> bool:
+        """
+        Reject a patch after review.
+        
+        Args:
+            ledger_id: Patch ledger ID
+            reviewer: Reviewer name/ID
+            reason: Rejection reason
+        
+        Returns:
+            True if rejected successfully
+        """
+        entry = self.get_entry(ledger_id)
+        if not entry or entry["state"] != "awaiting_review":
+            return False
+        
+        # Update metadata
+        metadata = json.loads(entry["metadata"]) if entry["metadata"] else {}
+        metadata.update({
+            "review_status": "rejected",
+            "reviewed_by": reviewer,
+            "reviewed_at": datetime.now(UTC).isoformat() + "Z",
+            "rejection_reason": reason,
+        })
+        
+        # Transition to dropped
+        return self.transition_state(ledger_id, "dropped", metadata)
+    
+    def list_patches_awaiting_review(
+        self,
+        run_id: Optional[str] = None,
+        workstream_id: Optional[str] = None,
+    ) -> List[Dict]:
+        """
+        List all patches awaiting review.
+        
+        Args:
+            run_id: Optional filter by run ID
+            workstream_id: Optional filter by workstream ID
+        
+        Returns:
+            List of patch entries awaiting review
+        """
+        return list(
+            self.list_entries(
+                run_id=run_id,
+                workstream_id=workstream_id,
+                state="awaiting_review",
+            )
+        )
 
     def _can_transition(self, from_state: str, to_state: str) -> bool:
         """
