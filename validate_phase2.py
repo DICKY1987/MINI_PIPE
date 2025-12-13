@@ -94,7 +94,7 @@ def validate_phase2() -> List[Tuple[bool, str]]:
         'Phase 2: Real adapter import'
     ))
     results.append(check_file_exists(
-        base_dir / 'docs' / 'PHASE2_CORE_FUNCTIONALITY.md',
+        base_dir / 'reports' / 'PHASE2_CORE_FUNCTIONALITY.md',
         'Phase 2: Documentation'
     ))
     

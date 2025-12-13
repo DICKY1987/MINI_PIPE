@@ -88,27 +88,47 @@ inv ci
 
 ```
 MINI_PIPE/
-├── src/
+├── src/                    # Source code
 │   ├── acms/               # ACMS (Autonomous Code Modification System)
 │   │   ├── controller.py   # Main orchestration logic
 │   │   ├── ai_adapter.py   # AI provider integrations
 │   │   ├── gap_registry.py # Gap detection and tracking
 │   │   └── guardrails.py   # Safety and validation
-│   └── minipipe/           # MINI_PIPE execution engine
-│       ├── orchestrator.py # Task orchestration
-│       ├── tools.py        # Tool execution primitives
-│       └── process_spawner.py # Worker process management
-├── tests/
+│   ├── minipipe/           # MINI_PIPE execution engine
+│   │   ├── orchestrator.py # Task orchestration
+│   │   ├── tools.py        # Tool execution primitives
+│   │   └── process_spawner.py # Worker process management
+│   └── cli/                # Command-line interface
+├── tests/                  # Test suites
 │   ├── unit/               # Unit tests
 │   ├── integration/        # Integration tests
 │   ├── e2e/                # End-to-end tests
 │   └── performance/        # Performance benchmarks
-├── config/                 # Configuration files
 ├── docs/                   # Documentation
+│   ├── acms/               # ACMS documentation
+│   ├── minipipe/           # MINI_PIPE documentation
+│   ├── guardrails/         # Guardrails documentation
+│   ├── uet_alignment/      # UET alignment documentation
+│   └── specs/              # Technical specifications
+├── config/                 # Configuration files
+│   ├── process_steps.json  # Process step definitions
+│   └── tool_profiles.json  # Tool configurations
+├── scripts/                # Utility scripts
+│   ├── acms_test_harness.py # E2E test harness
+│   └── multi_agent_orchestrator.py # Multi-agent orchestration
+├── reports/                # Completion and progress reports
+├── planning/               # TODO lists and planning documents
+├── design/                 # Analysis and design documents
+│   └── analysis_frameworks/ # Gap analysis frameworks
+├── patterns/               # Reusable patterns
+├── schemas/                # JSON schemas
+├── tools/                  # Development tools
+├── examples/               # Usage examples
 ├── .github/workflows/      # CI/CD workflows
 ├── tasks.py                # Invoke task definitions
 ├── invoke.yaml             # Invoke configuration
-└── requirements.txt        # Python dependencies
+├── requirements.txt        # Python dependencies
+└── README.md               # This file
 ```
 
 ---

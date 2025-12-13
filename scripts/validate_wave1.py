@@ -3,8 +3,8 @@
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Add src to path (scripts/ is one level below root)
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 def test_router_batching():
     """Verify router batching implementation"""
