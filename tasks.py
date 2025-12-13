@@ -651,6 +651,8 @@ def harness_plan(c, repo_root=".", spec_path="config/process_steps.json"):
         spec_path: Path to process steps spec (default: config/process_steps.json)
     """
     from pathlib import Path
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent / "scripts"))
     from acms_test_harness import load_process_spec, validate_process_spec
     
     repo_root = Path(repo_root).resolve()
@@ -684,6 +686,8 @@ def harness_e2e(c, repo_root, mode="full", spec_path="config/process_steps.json"
         spec_path: Path to process steps spec
     """
     from pathlib import Path
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent / "scripts"))
     from acms_test_harness import (
         load_process_spec,
         validate_process_spec,

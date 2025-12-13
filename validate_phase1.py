@@ -77,7 +77,7 @@ def validate_phase1() -> List[Tuple[bool, str]]:
     # Check documentation
     results.append(
         check_file_exists(
-            base_dir / "docs" / "PHASE1_QUICK_WINS_IMPLEMENTATION.md",
+            base_dir / "reports" / "PHASE1_QUICK_WINS_IMPLEMENTATION.md",
             "Phase 1 documentation",
         )
     )
